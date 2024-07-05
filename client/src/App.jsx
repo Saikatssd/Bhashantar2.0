@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Project from './pages/Project.jsx';
 import DocumentWorkflow from './pages/DocumentWorkflow.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -67,6 +68,7 @@ const App = () => {
         />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
+      <Toaster/>
     </Router>
   );
 };
