@@ -11,7 +11,7 @@ router.post('/createCompany', async (req, res) => {
             name,
             createdAt: Date.now(),
         });
-        res.status(201).send({name, id: companyRef.id });
+        res.status(201).send({ name, id: companyRef.id });
     } catch (error) {
         res.status(400).send(error);
     }
@@ -25,6 +25,39 @@ router.get('/', async (req, res) => {
         res.status(200).send(companies);
     } catch (error) {
         res.status(400).send(error);
+    }
+});
+
+
+// Route to get users for a company
+router.get('/getCompanyUsers/:companyId', async (req, res) => {
+    const { companyId } = req.params;
+
+    try {
+        const companyRef = db.collection('companies').doc(companyId);
+        const companyDoc = await companyRef.get();
+
+        const companyData = companyDoc.exists ? companyDoc.data() : null;
+
+        const usersRef = db.collection('users').where('companyId', '==', companyId);
+        const usersSnapshot = await usersRef.get();
+
+        const users = usersSnapshot.docs.map(doc => ({
+            uid: doc.id, 
+            email: doc.data().email,
+            role: doc.data().role,
+            // companyId: companyId,
+        }));
+
+        const response = {
+            users,
+            company: companyData || null 
+        };
+
+        res.status(200).send(response);
+    } catch (error) {
+        console.error('Error retrieving company users:', error);
+        res.status(500).send('Internal server error');
     }
 });
 

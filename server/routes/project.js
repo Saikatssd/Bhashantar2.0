@@ -1,10 +1,11 @@
 // backend/routes/projects.js
 const express = require('express');
 const { db } = require('../firebaseAdmin');
+const checkPermission = require('../middleware/checkPermission')
 const router = express.Router();
 
 // Endpoint to create new project
-router.post('/createProject', async (req, res) => {
+router.post('/createProject',checkPermission('create_project'), async (req, res) => {
     const { name, companyId } = req.body;
     try {
         const projectRef = db.collection('projects').doc();

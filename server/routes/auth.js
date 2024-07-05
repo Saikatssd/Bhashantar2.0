@@ -34,7 +34,7 @@ router.post('/registerInitialSuperAdmin', async (req, res) => {
 
     try {
         const userRecord = await auth.createUser({ email, password });
-        
+
         await db.collection('users').doc(userRecord.uid).set({
             email: userRecord.email,
             role: 'superAdmin',
@@ -65,4 +65,35 @@ router.post('/registerInitialSuperAdmin', async (req, res) => {
 //     res.status(400).send(error.message);
 //   }
 // });
+
+router.get('/getUserProfile', async (req, res) => {
+    try {
+        const currentUser = await auth.currentUser();
+
+        if (!currentUser) {
+            return res.status(401).send('Unauthorized: Please sign in to access your profile');
+        }
+
+        const userRef = db.collection('users').doc(currentUser.uid);
+        // const userRef = db.collection('users').doc('7ldaHVCzrgYLgJVnpTW33NSbdbe2');
+
+        const userDoc = await userRef.get();
+
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            const userProfile = {
+                email: userData.email,
+                role: userData.role,
+                companyId: userData.companyId,
+            };
+            return res.status(200).send(userProfile);
+        } else {
+            return res.status(404).send('User profile not found');
+        }
+    } catch (error) {
+        console.error('Error retrieving user profile:', error);
+        return res.status(500).send('Internal server error');
+    }
+});
+
 module.exports = router;

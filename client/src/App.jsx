@@ -12,6 +12,7 @@ import PrivateRoute from './components/PrivateRoute.jsx';
 
 const App = () => {
   const [user, setUser] = useState(null);
+ 
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
