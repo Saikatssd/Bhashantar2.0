@@ -1,6 +1,7 @@
 const express = require('express');
 const { db } = require('../firebaseAdmin');
 const router = express.Router();
+const ErrorHandler = require('../utils/errorHandler')
 
 // Endpoint to create new company
 router.post('/createCompany', async (req, res) => {
@@ -8,14 +9,29 @@ router.post('/createCompany', async (req, res) => {
     try {
         const companyRef = db.collection('companies').doc();
         await companyRef.set({
+            // id: companyRef.id,
             name,
-            createdAt: Date.now(),
+            createdAt: new Date(),
         });
         res.status(201).send({ name, id: companyRef.id });
     } catch (error) {
         res.status(400).send(error);
     }
 });
+router.delete('/deleteCompany', async (req, res, next) => {
+    const { id } = req.body;
+    try {
+      const company = await db.collection('companies').doc(id).get();
+      if (!company.exists) {
+        return next(new ErrorHandler('Company not found', 404));
+      }
+    
+      await db.collection('companies').doc(id).delete();
+      res.status(200).send('Company deleted successfully');
+    } catch (error) {
+      next(new ErrorHandler('Error deleting roleCompany ' + error.message, 500));
+    }
+  });
 
 // Endpoint to fetch all companies
 router.get('/', async (req, res) => {
@@ -60,5 +76,62 @@ router.get('/getCompanyUsers/:companyId', async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+
+
+
+// Get all users in a company
+router.get('/getAllUsersInCompany', async (req, res, next) => {
+  const { companyId } = req.body;
+//   const { companyId } = req.query;
+
+  if (!companyId) {
+    return next(new ErrorHandler("Company ID is required", 400));
+  }
+
+  try {
+    const companyRef = db.collection('companies').doc(companyId);
+    const companySnapshot = await companyRef.get();
+
+    if (!companySnapshot.exists) {
+      return next(new ErrorHandler("Company Not Found", 400));
+    }
+
+    const companyData = companySnapshot.data();
+    const companyName = companyData.name;
+
+    const usersQuerySnapshot = await db.collection('users').where('companyId', '==', companyId).get();
+    if (usersQuerySnapshot.empty) {
+      return res.status(200).json({ users: [] });
+    }
+
+    const users = [];
+    for (const doc of usersQuerySnapshot.docs) {
+      const userData = doc.data();
+      const roleRef = db.collection('roles').doc(userData.roleId);
+      const roleSnapshot = await roleRef.get();
+
+      if (!roleSnapshot.exists) {
+        return next(new ErrorHandler("Role Not Found", 400));
+      }
+
+      const roleData = roleSnapshot.data();
+      users.push({
+        uid: doc.id,
+        name: userData.name,
+        email: userData.email,
+        phoneNo: userData.phoneNo,
+        roleName: roleData.name,
+        companyId: userData.companyId,
+        companyName: companyName
+      });
+    }
+
+    return res.status(200).json({ users });
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    return next(new ErrorHandler('Internal server error', 500));
+  }
+});
+
 
 module.exports = router;

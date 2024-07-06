@@ -1,11 +1,17 @@
-// backend/routes/documents.js
 const express = require('express');
 const { Storage } = require('@google-cloud/storage');
 const { db } = require('../firebaseAdmin');
 const router = express.Router();
+const getStorage = require('firebase/storage')
+const ErrorHandler = require('../utils/errorHandler')
+
+// const firebase = require('firebase')
+// const storageBucket = "kyrotics.appspot.com"
 
 const storage = new Storage();
-const bucket = storage.bucket(process.env.GCLOUD_STORAGE_BUCKET);
+// const storage = getStorage(firebase);
+// console.log(storage)
+const bucket = storage.bucket(process.env.storageBucket);
 
 // Endpoint to generate signed URL for document upload
 router.get('/:projectId/uploadUrl', async (req, res) => {
@@ -119,3 +125,6 @@ router.get('/:projectId/documents/:documentId/download', async (req, res) => {
         res.status(400).send(error);
     }
 });
+
+
+module.exports = router;
