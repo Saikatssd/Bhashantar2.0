@@ -29,6 +29,7 @@ router.post('/createUser', async (req, res, next) => {
       phoneNo:phoneNo,
       roleId: roleId,
       companyId: companyId,
+      isActive: true,
       createdAt: new Date(),
     });
 
@@ -66,6 +67,7 @@ router.post('/registerSuperAdmin', async (req, res) => {
       phoneNo:phoneNo,
       roleId: roleId,
       companyId: null,
+      isActive: true,
       createdAt: new Date(),
     });
 

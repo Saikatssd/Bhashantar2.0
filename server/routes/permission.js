@@ -63,7 +63,7 @@ router.put('/updatePermission', async (req, res) => {
     }
 });
 
-//get all roles
+//get all permissions
 router.get('/getAllPermissions', async (req, res) => {
     try {
         const permissions = await db.collection('permissions').get();

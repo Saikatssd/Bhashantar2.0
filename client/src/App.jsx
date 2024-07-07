@@ -10,10 +10,11 @@ import Project from './pages/Project.jsx';
 import DocumentWorkflow from './pages/DocumentWorkflow.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from './context/AuthContext.jsx';
 
 const App = () => {
   const [user, setUser] = useState(null);
- 
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -30,46 +31,49 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleLogout = () => {
-    auth.signOut().then(() => {
-      setUser(null);
-    });
-  };
+  // const handleLogout = () => {
+  //   auth.signOut().then(() => {
+  //     setUser(null);
+  //   });
+  // };
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute user={user}>
-              <Dashboard user={user} onLogout={handleLogout} />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/projects"
-          element={
-            <PrivateRoute user={user}>
-              <Project user={user} />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/workflow/:projectId"
-          element={
-            <PrivateRoute user={user}>
-              <DocumentWorkflow user={user} />
-            </PrivateRoute>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-      <Toaster/>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+          {/* <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute user={user}>
+                <Dashboard user={user} onLogout={handleLogout} />
+              </PrivateRoute>
+            }
+          /> */}
+          {/* <Route
+            path="/projects"
+            element={
+              <PrivateRoute user={user}>
+                <Project user={user} />
+              </PrivateRoute>
+            }
+          /> */}
+          {/* <Route
+            path="/workflow/:projectId"
+            element={
+              <PrivateRoute user={user}>
+                <DocumentWorkflow user={user} />
+              </PrivateRoute>
+            }
+          /> */}
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
+        </Routes>
+        <Toaster />
+      </Router>
+    </AuthProvider>
   );
 };
 

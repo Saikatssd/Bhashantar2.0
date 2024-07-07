@@ -1,47 +1,82 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../utils/firebase';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { Navigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
+// import { signInWithEmailAndPassword } from 'firebase/auth';
+// import { useAuth } from '../context/AuthContext.jsx'
 import { toast } from "react-hot-toast";
+import { handleSendPasswordResetEmail, handleSignIn } from '../utils/auth.jsx'
 
 const Login = () => {
+  const { userLoggedIn } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const [isSigningIn, setIsSigningIn] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // const navigate = useNavigate();
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     await signInWithEmailAndPassword(auth, email, password);
+  //     toast.success("Login Successful");
+  //     navigate('/dashboard');
+  //   } catch (error) {
+  //     console.error('Error logging in:', error);
+  //     const errorCode = error.code;
+  //     let errorMessage;
+
+  //     switch (errorCode) {
+  //       case 'auth/invalid-email':
+  //         errorMessage = "Email not found.";
+  //         break;
+  //       case 'auth/too-many-requests':
+  //         errorMessage = "Too many login attempts. Please try again later.";
+  //         break;
+
+  //       case 'auth/invalid-credential': 
+  //         errorMessage = "Invalid email or password.";
+  //         break;
+  //     }
+
+  //     if (!errorMessage) {
+  //       errorMessage = "An error occurred. Please check your network connection.";
+  //     }
+  //     toast.error(errorMessage);
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      toast.success("Login Successful");
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Error logging in:', error);
-      const errorCode = error.code;
-      let errorMessage;
-  
-      switch (errorCode) {
-        case 'auth/invalid-email':
-          errorMessage = "Email not found.";
-          break;
-        case 'auth/too-many-requests':
-          errorMessage = "Too many login attempts. Please try again later.";
-          break;
-        
-        case 'auth/invalid-credential': 
-          errorMessage = "Invalid email or password.";
-          break;
+    e.preventDefault()
+    if (!isSigningIn) {
+      setIsSigningIn(true)
+      try {
+        await handleSignIn(email, password)
+      } catch (error) {
+        setErrorMessage(error.message)
+        toast.error(error.message)
+        setIsSigningIn(false)
       }
-  
-      if (!errorMessage) {
-        errorMessage = "An error occurred. Please check your network connection.";
-      }
-      toast.error(errorMessage);
     }
-  };
+  }
+
+  const onForgotPassword = async () => {
+    if (email) {
+      try {
+        await handleSendPasswordResetEmail(email)
+        toast.success('Password reset email sent!')
+      } catch (error) {
+        toast.error(error.message)
+      }
+    } else {
+      toast.error('Please enter your email address first.')
+    }
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center">
+      {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
       <div className="">
         <div className="hidden sm:mb-1 sm:flex sm:justify-center">
           <div className="">
@@ -79,7 +114,7 @@ const Login = () => {
                 Password
               </label>
               <div className="text-sm">
-                <a href="#" className="font-semibold text-indigo-600 hover:text-indigo-500">
+                <a href='#' onClick={onForgotPassword} className="font-semibold text-indigo-600 hover:text-indigo-500">
                   Forgot password?
                 </a>
               </div>
@@ -98,8 +133,8 @@ const Login = () => {
             </div>
           </div>
           <div>
-            <button  type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 mt-6 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              Log in
+            <button type="submit" disabled={isSigningIn} className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 mt-6 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+             {isSigningIn ?'Signing In...' : 'Sign In'}
             </button>
           </div>
         </form>

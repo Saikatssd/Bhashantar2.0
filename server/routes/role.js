@@ -187,4 +187,6 @@ router.get('/getAllRoles', async (req, res) => {
   }
 });
 
+//Disable role
+
 module.exports = router;
