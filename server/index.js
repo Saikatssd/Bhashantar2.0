@@ -14,7 +14,13 @@ const permissionRoutes = require('./routes/permission');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Routes
@@ -22,7 +28,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/project', projectRoutes);
-app.use('/api/documents', documentRoutes);
+app.use('/api/document', documentRoutes);
 app.use('/api/permission', permissionRoutes);
 
 app.use(errorMiddleware);

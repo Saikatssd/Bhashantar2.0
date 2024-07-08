@@ -31,28 +31,28 @@ const App = () => {
     return () => unsubscribe();
   }, []);
 
-  // const handleLogout = () => {
-  //   auth.signOut().then(() => {
-  //     setUser(null);
-  //   });
-  // };
+  const handleLogout = () => {
+    auth.signOut().then(() => {
+      setUser(null);
+    });
+  };
 
   return (
     <AuthProvider>
       <Router>
         <Routes>
 
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Home />} />
-          {/* <Route
+          <Route
             path="/dashboard"
             element={
               <PrivateRoute user={user}>
                 <Dashboard user={user} onLogout={handleLogout} />
               </PrivateRoute>
             }
-          /> */}
+            />
+            {/* <Route path="/" element={<Home />} /> */}
           {/* <Route
             path="/projects"
             element={
