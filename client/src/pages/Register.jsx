@@ -180,6 +180,8 @@ const Register = () => {
 
     fetchRolesAndCompanies();
   }, []);
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isRegistering) {
@@ -201,47 +203,27 @@ const Register = () => {
             },
           }
         );
-
+  
         toast.success('Registration Successful');
         resetForm();
       } catch (error) {
         console.error(error);
         let message = "An error occurred. Please try again.";
-
-        if (error.response && error.response.data && error.response.data.error) {
-          switch (error.response.data.error.code) {
-            case 'auth/invalid-email':
-              message = "The email address is not valid.";
-              break;
-            case 'auth/weak-password':
-              message = "The password is not strong enough.";
-              break;
-            case 'auth/email-already-in-use':
-              message = "The email address is already in use.";
-              break;
-            case 'auth/operation-not-allowed':
-              message = "This operation is not allowed. Please contact support.";
-              break;
-            case 'auth/too-many-requests':
-              message = "Too many register attempts. Please try again later.";
-              break;
-            case 'auth/network-request-failed':
-              message = "Check your Internet Connection.";
-              break;
-            default:
-              message = error.response.data.error.message || message;
-          }
+  
+        // Check for backend error messages
+        if (error.response && error.response.data) {
+          message = error.response.data.error || message;
         } else {
           message = error.message || message;
         }
-
+  
         toast.error(message);
       } finally {
         setIsRegistering(false);
       }
     }
   };
-
+  
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -342,6 +324,7 @@ const Register = () => {
             <input
               id="password"
               type="password"
+              minLength='6'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

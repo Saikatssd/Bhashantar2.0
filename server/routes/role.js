@@ -124,7 +124,6 @@ router.put('/updateRole', async (req, res, next) => {
     await db.collection('roles').doc(id).update({
       name: name !== undefined ? name : role.name,
       isAllowedToDelete: isAllowedToDelete !== undefined ? isAllowedToDelete : role.isAllowedToDelete,
-      isActive:isActive !== undefined ? isActive : role.isActive,
       updated_ts: new Date()
     });
     res.status(200).send('Role updated successfully');
@@ -149,6 +148,29 @@ router.delete('/deleteRole', async (req, res, next) => {
     res.status(200).send('Role deleted successfully');
   } catch (error) {
     next(new ErrorHandler('Error deleting role: ' + error.message, 500));
+  }
+});
+
+
+// Disable a role
+router.put('/disableRole', async (req, res, next) => {
+  const { id } = req.body;
+  try {
+    const roleDoc = await db.collection('roles').doc(id).get();
+    if (!roleDoc.exists) {
+      return next(new ErrorHandler('Role not found', 404));
+    }
+    const role = roleDoc.data();
+    if (role.name === 'admin' || role.name === 'superAdmin' || role.name === 'user') {
+      return next(new ErrorHandler("Default roles cannot be disabled", 403));
+    }
+    await db.collection('roles').doc(id).update({
+      isActive: false,
+      updated_ts: new Date()
+    });
+    res.status(200).send('Role disabled successfully');
+  } catch (error) {
+    next(new ErrorHandler('Error disabling role: ' + error.message, 500));
   }
 });
 
@@ -187,6 +209,5 @@ router.get('/getAllRoles', async (req, res) => {
   }
 });
 
-//Disable role
 
 module.exports = router;
