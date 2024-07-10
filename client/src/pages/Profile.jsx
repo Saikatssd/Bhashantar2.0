@@ -74,6 +74,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { server } from '../main';
+import Sidebar from '../components/Sidebar';
 
 const Profile = () => {
     const [profile, setProfile] = useState(null);
@@ -86,12 +87,14 @@ const Profile = () => {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     try {
+                        // console.log("user: " + user)
                         const token = await user.getIdToken();
                         const response = await axios.get(`${server}/api/auth/getUserProfile`, {
                             headers: {
                                 'Authorization': `Bearer ${token}`
                             }
                         });
+                        // console.log("response",response.data)
                         setProfile(response.data);
                     } catch (err) {
                         setError('Error fetching profile');
@@ -117,23 +120,23 @@ const Profile = () => {
     }
 
     return (
-        <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800">User Profile</h2>
-            <div className="mb-4">
-                <span className="font-bold text-gray-700">Name: </span>
-                <span className="text-gray-600">{profile.name}</span>
-            </div>
-            <div className="mb-4">
-                <span className="font-bold text-gray-700">Email: </span>
-                <span className="text-gray-600">{profile.email}</span>
-            </div>
-            <div className="mb-4">
-                <span className="font-bold text-gray-700">Role: </span>
-                <span className="text-gray-600">{profile.roleName}</span>
-            </div>
-            <div className="mb-4">
-                <span className="font-bold text-gray-700">Company Name: </span>
-                <span className="text-gray-600">{profile.companyName}</span>
+        <div className='flex'>
+            <Sidebar />
+            <div className="w-full mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+                <h2 className="text-2xl font-semibold mb-4 text-gray-800">User Profile</h2>
+                <div className="mb-4">
+                    <span className="font-bold text-gray-700">Name: </span>
+                    <span className="text-gray-600">{profile.name}</span>
+                </div>
+                <div className="mb-4">
+                    <span className="font-bold text-gray-700">Email: </span>
+                    <span className="text-gray-600">{profile.email}</span>
+                </div>
+                <div className="mb-4">
+                    <span className="font-bold text-gray-700">Role: </span>
+                    <span className="text-gray-600">{profile.roleName}</span>
+                </div>
+              
             </div>
         </div>
     );

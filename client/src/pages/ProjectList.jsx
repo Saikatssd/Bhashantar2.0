@@ -5,6 +5,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
+import Sidebar from '../components/Sidebar';
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,7 +17,7 @@ const ProjectList = () => {
 
   const newProject = async (e) => {
     // setCompanyId('paQkGqHmTFD3C6wPaNh8')
-    const companyId = 'paQkGqHmTFD3C6wPaNh8';
+    const companyId = 'cvy2lr5H0CUVH8o2vsVk';
     try {
       const response = await axios.post(`${server}/api/project/createProject`, {
         name: newProjectName,
@@ -40,7 +41,7 @@ const ProjectList = () => {
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`${server}/api/project/${'paQkGqHmTFD3C6wPaNh8'}/getprojects`,
+        const response = await axios.get(`${server}/api/project/${'cvy2lr5H0CUVH8o2vsVk'}/getprojects`,
         );
         setProjects(response.data);
       } catch (err) {
@@ -53,6 +54,8 @@ const ProjectList = () => {
   }, []);
 
   return (
+    <div className='flex'>
+      <Sidebar/>
     <div className="flex justify-center items-center p-20">
       {isLoading && <p>Loading projects...</p>}
       {error && <p>Error fetching projects: {error.message}</p>}
@@ -81,7 +84,7 @@ const ProjectList = () => {
         variant="extended"
         color="primary"
         size="large"
-        sx={{ position: 'fixed', bottom: 25, right: 16, width: '200px', height: '75px', fontSize: '18px' }}
+        sx={{ position: 'fixed', bottom: 40, right: 16, width: '220px', height: '75px', fontSize: '18px' }}
         onClick={() => setIsModalOpen(true)}
       >
         <AddIcon sx={{ mr: 1 }} />
@@ -141,6 +144,7 @@ const ProjectList = () => {
           </div>
         </Dialog>
       )}
+    </div>
     </div>
   );
 };

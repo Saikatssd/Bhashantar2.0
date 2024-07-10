@@ -145,6 +145,8 @@ router.delete('/deleteRole', async (req, res, next) => {
       return next(new ErrorHandler("Default roles cannot be deleted", 403));
     }
     await db.collection('roles').doc(id).delete();
+    await db.collection('permissions').doc(role.permissionId).delete();
+
     res.status(200).send('Role deleted successfully');
   } catch (error) {
     next(new ErrorHandler('Error deleting role: ' + error.message, 500));
@@ -201,11 +203,11 @@ router.post('/assignRole', async (req, res, next) => {
 //get all roles
 router.get('/getAllRoles', async (req, res) => {
   try {
-      const rolesSnapshot = await db.collection('roles').get();
-      const roles = rolesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      res.status(200).send(roles);
+    const rolesSnapshot = await db.collection('roles').get();
+    const roles = rolesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).send(roles);
   } catch (error) {
-      res.status(400).send(error);
+    res.status(400).send(error);
   }
 });
 

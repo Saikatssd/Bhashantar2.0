@@ -1,22 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const Dashboard = ({ user, onLogout }) => {
+const Dashboard = ({ role, onLogout }) => {
+  useEffect(() => {
+
+    console.log("Role in Dashboard", role)
+  }, [])
+
   return (
     <div>
       <h1>Dashboard</h1>
       <button onClick={onLogout}>Logout</button>
-      {user.role === 'superAdmin' && (
+      {role === 'superAdmin' && (
         <div>
           <Link to="/create-company">Create Company</Link>
         </div>
       )}
-      {user.role !== 'companyUser' && (
+      {role !== 'companyUser' && (
         <div>
           <Link to="/project">Manage Projects</Link>
         </div>
       )}
-      {user.role === 'companyUser' && (
+      {role === 'companyUser' && (
         <div>
           <Link to="/workflow">Document Workflow</Link>
         </div>

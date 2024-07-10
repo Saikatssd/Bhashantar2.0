@@ -308,6 +308,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox } from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
+import Sidebar from '../components/Sidebar';
 
 
 const PermissionsManager = () => {
@@ -374,6 +375,8 @@ const PermissionsManager = () => {
   };
 
   return (
+    <div className='flex'>
+      <Sidebar/>
     <div className="p-4 ">
       <h1 className="text-2xl font-bold mb-4">Permissions Manager</h1>
       <div className=''>
@@ -491,6 +494,7 @@ const PermissionsManager = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Checkbox, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { server } from '../main'
+import Sidebar from '../components/Sidebar';
 
 const RoleManager = () => {
   const [open, setOpen] = useState(false);
@@ -56,7 +57,9 @@ const RoleManager = () => {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className='flex'>
+      <Sidebar/>
+    <div className="p-4 w-full">
       <h1 className="text-2xl font-bold mb-4">Role Manager</h1>
       <Button variant="contained" color="primary" onClick={handleOpen}>Create Role</Button>
 
@@ -126,6 +129,7 @@ const RoleManager = () => {
           <Button onClick={handleSubmit} color="primary">{editRoleId ? 'Update' : 'Create'}</Button>
         </DialogActions>
       </Dialog>
+    </div>
     </div>
   );
 };

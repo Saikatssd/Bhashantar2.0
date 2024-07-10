@@ -88,33 +88,87 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import { Toaster } from 'react-hot-toast';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import Profile from './pages/Profile';
 import ProjectList from './pages/ProjectList';
 import PermissionsManage from './pages/PemissionManage';
 import RoleManage from './pages/RoleManage';
 import CompanyList from './pages/CompanyList';
 import CompanyInstance from './components/CompanyInstance';
+import { getAuth } from 'firebase/auth';
+import axios from 'axios';
+import { server } from './main';
+import AdminHome from './pages/Admin/AdminHome';
+import UserHome from './pages/Users/UserHome';
+import SuperAdminHome from './pages/SuperAdmin/SuperAdminHome';
+
 
 const App = () => {
+  // const { userLoggedIn } = useAuth();
+
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const [role, setRole] = useState();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdTokenResult();
         user.role = token.claims.role;
         user.companyId = token.claims.companyId;
         setUser(user);
+        console.log("user",user)
+        // const userToken = await user.getIdToken();
+        // console.log("token", token)
+        const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+          headers: {
+            'Authorization': `Bearer ${token.token}`
+          }
+        });
+        // console.log("response", response);
+        // setUser(response.data);
+
+        setRole(response.data.roleName)
       } else {
         setUser(null);
       }
       setLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
+
+
+  // useEffect(() => {
+  //   const fetchUserProfile = async () => {
+  //     // const auth = getAuth();
+  //     auth.onAuthStateChanged(async (user) => {
+  //       if (user) {
+  //         try {
+  //           console.log("user: " + user)
+  //           const token = await user.getIdToken();
+  // const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+  //   headers: {
+  //     'Authorization': `Bearer ${token}`
+  //   }
+  // });
+  // console.log("response", response);
+  //           setRole(response.data.roleName);
+  //         } catch (err) {
+  //           setError('Error fetching profile');
+  //         } finally {
+  //           setLoading(false);
+  //         }
+  //       } else {
+  //         setLoading(false);
+  //         setError('No user is signed in');
+  //       }
+  //     });
+  //   };
+
+  //   fetchUserProfile();
+  // }, []);
 
   const handleLogout = () => {
     auth.signOut().then(() => {
@@ -122,29 +176,46 @@ const App = () => {
     });
   };
 
+  const getDashboard = () => {
+    console.log("role",role)
+    if (!user) return <Navigate to="/" />;
+
+    if (role === 'user') return <UserHome />;
+    if (role === 'admin') return <AdminHome />;
+    if (role === 'superAdmin') return <SuperAdminHome />;
+    return <Navigate to="/dashboard" />;
+  };
+
+
   if (loading) {
-    return <div>Loading...</div>; 
+    return <div>Loading...</div>;
   }
 
   return (
     <AuthProvider>
       <Router>
         <Routes>
+
           <Route path="/" element={<Login />} />
+
+          <Route path="/home" Component={getDashboard} />
+
+
           <Route path="/register" element={<Register />} />
+
+          <Route path="/adminHome" element={<AdminHome />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/project" element={<ProjectList />} />
+          <Route path="/project" element={<ProjectList companyId={user.companyId}/>} />
           <Route path="/permissionManage" element={<PermissionsManage />} />
           <Route path="/roleManage" element={<RoleManage />} />
           <Route path="/company" element={<CompanyList />} />
           <Route path="/company/:id" element={<CompanyInstance />} />
-
-          
+          {/* <Route path="/workspace" element={<Workspace />} /> */}
           <Route
             path="/dashboard"
             element={
               <PrivateRoute user={user}>
-                <Dashboard user={user} onLogout={handleLogout} />
+                <Dashboard role={role} onLogout={handleLogout} />
               </PrivateRoute>
             }
           />

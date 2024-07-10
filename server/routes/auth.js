@@ -42,6 +42,7 @@ router.post('/createUser', async (req, res, next) => {
     // Create the user in Firebase Authentication
     const userRecord = await auth.createUser({ email, password });
 
+
     // Save user data to Firestore
     await db.collection('users').doc(userRecord.uid).set({
       name,
@@ -52,8 +53,9 @@ router.post('/createUser', async (req, res, next) => {
       isActive: true,
       createdAt: new Date(),
     });
-
-    res.status(201).send({ uid: userRecord.uid, name });
+    const userDoc = await db.collection('users').doc(userRecord.uid).get();
+    const userData = userDoc.data();
+    res.status(201).send({ uid: userRecord.uid, name, ...userData });
   } catch (error) {
     console.error('Error creating user:', error);
     next(error)
@@ -108,7 +110,7 @@ router.post('/createUser', async (req, res, next) => {
 
 
 
-router.post('/registerSuperAdmin', async (req, res) => {
+router.post('/registerSuperAdmin', async (req, res, next) => {
   const { name, email, password, phoneNo, roleId } = req.body;
 
   if (!email || !password) {
@@ -177,6 +179,7 @@ router.post('/registerSuperAdmin', async (req, res) => {
 //   }
 // });
 
+
 router.get('/getUserProfile', verifyToken, async (req, res, next) => {
   try {
     const uid = req.user.uid;
@@ -186,43 +189,37 @@ router.get('/getUserProfile', verifyToken, async (req, res, next) => {
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
+      console.error(`User with UID ${uid} not found`);
       return next(new ErrorHandler("User Not Found", 400));
     }
 
     const userData = userDoc.data();
 
-    if (!userData.roleId) {
-      return next(new ErrorHandler("Role ID Not Found in User Data", 400));
-    }
-
-    if (!userData.companyId) {
-      return next(new ErrorHandler("Company ID Not Found in User Data", 400));
-    }
-
     // Fetch the role document
     const roleRef = db.collection('roles').doc(userData.roleId);
     const roleDoc = await roleRef.get();
     if (!roleDoc.exists) {
+      console.error(`Role with ID ${userData.roleId} not found`);
       return next(new ErrorHandler("Role Not Found", 400));
     }
     const roleData = roleDoc.data();
 
     // Fetch the company document
-    const companyRef = db.collection('companies').doc(userData.companyId);
-    const companyDoc = await companyRef.get();
-    if (!companyDoc.exists) {
-      return next(new ErrorHandler("Company Not Found", 400));
-    }
-    const companyData = companyDoc.data();
+  
+    // if (userData.companyId) {
 
-    // Create the user profile object with role and company names
+    //   const companyRef = db.collection('companies').doc(userData.companyId);
+    //   const companyDoc = await companyRef.get();
+    //   const companyData = companyDoc.data();
+    // }
+
     const userProfile = {
       name: userData.name,
       email: userData.email,
-      role: userData.roleId,
-      roleName: roleData.name, // Assuming the role document has a 'name' field
+      role: userData.roleId.roleName,
+      roleName: roleData.name,
       companyId: userData.companyId,
-      companyName: companyData.name, // Assuming the company document has a 'name' field
+      // companyName: companyData.name,
     };
 
     return res.status(200).send(userProfile);
@@ -232,6 +229,6 @@ router.get('/getUserProfile', verifyToken, async (req, res, next) => {
   }
 });
 
-module.exports = router;
 
 module.exports = router;
+

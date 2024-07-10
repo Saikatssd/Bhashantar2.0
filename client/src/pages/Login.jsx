@@ -73,7 +73,7 @@ const Login = () => {
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center">
-      {userLoggedIn && (<Navigate to={'/dashboard'} replace={true} />)}
+      {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
       <div className="">
         <div className="hidden sm:mb-1 sm:flex sm:justify-center">
           <div className="">
