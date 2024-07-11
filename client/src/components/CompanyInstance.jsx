@@ -31,6 +31,7 @@ import ProjectList from '../pages/ProjectList';
 import PermissionsManage from '../pages/PemissionManage';
 import RoleManage from '../pages/RoleManage';
 import UserWork from '../pages/Users/UserWork'
+import UserManage from '../pages/UserManage';
 
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
@@ -44,8 +45,10 @@ const CompanyInstance = ({ role }) => {
           <Route path="myWork" element={<UserWork />} />
           {role !== 'user' && (
             <>
+
               <Route path="permissionManage" element={<PermissionsManage />} />
               <Route path="roleManage" element={<RoleManage />} />
+              <Route path="userManage" element={<UserManage companyId={companyId} />} />
             </>
           )}
         </Routes>

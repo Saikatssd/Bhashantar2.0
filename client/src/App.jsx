@@ -340,12 +340,11 @@ import PrivateRoute from './components/PrivateRoute';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import Profile from './pages/Profile';
-
 import CompanyInstance from './components/CompanyInstance';
 import axios from 'axios';
-import AdminHome from './pages/Admin/AdminHome';
-import UserHome from './pages/Users/UserHome';
-import SuperAdminHome from './pages/SuperAdmin/SuperAdminHome';
+// import AdminHome from './pages/Admin/AdminHome';
+// import UserHome from './pages/Users/UserHome';
+// import SuperAdminHome from './pages/SuperAdmin/SuperAdminHome';
 import { server } from './main';
 import ProjectFiles from './components/ProjectFiles';
 import DashboardWrapper from './components/DashboardWrapper';

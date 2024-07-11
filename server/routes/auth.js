@@ -230,5 +230,24 @@ router.get('/getUserProfile', verifyToken, async (req, res, next) => {
 });
 
 
+// Disable a user
+router.post('/disableUser', async (req, res, next) => {
+  const { userId } = req.body;
+
+  try {
+    const userRef = db.collection('users').doc(userId);
+    const userDoc = await userRef.get();
+    if (!userDoc.exists) {
+      return next(new ErrorHandler('User not found', 404));
+    }
+
+    await userRef.update({ disabled: true });
+    res.status(200).send('User disabled successfully');
+  } catch (error) {
+    next(new ErrorHandler('Error disabling user: ' + error.message, 500));
+  }
+});
+
+
 module.exports = router;
 
