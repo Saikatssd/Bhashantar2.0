@@ -1,5 +1,3 @@
-// src/components/DashboardWrapper.jsx
-
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../utils/firebase';
@@ -45,6 +43,11 @@ const DashboardWrapper = () => {
 
     if (!user) {
         return <Navigate to="/" />;
+    }
+
+    // Allow specific company user to access SuperAdminHome
+    if (role === 'user' && companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+        return <SuperAdminHome />;
     }
 
     if (role === 'user') {

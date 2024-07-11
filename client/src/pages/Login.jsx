@@ -10,7 +10,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSigningIn, setIsSigningIn] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,8 +20,6 @@ const Login = () => {
         await handleSignIn(email, password);
         toast.success("Login Successful");
       } catch (error) {
-        // console.error("error", error);
-
         let message = "An error occurred. Please try again.";
         if (error.code) {
           switch (error.code) {
@@ -50,7 +48,6 @@ const Login = () => {
           message = error.message || message;
         }
         
-        // setErrorMessage(message);
         toast.error(message);
       } finally {
         setIsSigningIn(false);
@@ -71,28 +68,39 @@ const Login = () => {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center">
+    <section className="relative flex flex-wrap lg:h-screen lg:items-center">
       {userLoggedIn && (<Navigate to={'/home'} replace={true} />)}
-      <div className="">
-        <div className="hidden sm:mb-1 sm:flex sm:justify-center">
-          <div className="">
-            <a href="#" className="font-bold text-3xl text-indigo-600">
-              <img src="/logo.png" alt="Bhashantaar Logo" style={{ height: '13rem', width: 'auto' }} />
-            </a>
-          </div>
-        </div>
-        <h2 className="mt-7 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to your account
-        </h2>
+      <div className="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+        <img
+          alt=""
+          src="login.jpg"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+
+      <div className="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-lg text-center">
+          <div className="hidden sm:mb-1 sm:flex sm:justify-center">
+            <div className="">
+              <a href="#" className="font-bold text-3xl text-indigo-600">
+                <img src="/logo.png" alt="Bhashantaar Logo" style={{ height: '16rem', width: 'auto' }} />
+              </a>
+            </div>
+          </div>
+          <h2 className="mt-7 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+            Sign in to your account
+          </h2>
+        </div>
+
+        <form className="mx-auto mb-0 mt-8 max-w-md space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email
-            </label>
-            <div className="mt-2">
+            <label htmlFor="email" className="sr-only">Email</label>
+            <div className="relative">
               <input
                 id="email"
                 name="email"
@@ -101,48 +109,93 @@ const Login = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full rounded-md indent-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+                placeholder="Enter email"
               />
+              <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                  />
+                </svg>
+              </span>
             </div>
           </div>
+
           <div>
             <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-                Password
-              </label>
-              <div className="text-sm">
+              <label htmlFor="password" className="sr-only">Password</label>
+              <div className="text-sm mb-2">
                 <a href='#' onClick={onForgotPassword} className="font-semibold text-indigo-600 hover:text-indigo-500">
                   Forgot password?
                 </a>
               </div>
             </div>
-            <div className="mt-2">
+            <div className="relative">
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={isPasswordVisible ? "text" : "password"}
                 autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md indent-2 border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                className="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+                placeholder="Enter password"
               />
+              <span className="absolute inset-y-0 end-0 grid place-content-center px-4" onClick={togglePasswordVisibility} style={{ cursor: 'pointer' }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="size-4 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  {isPasswordVisible ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M13.875 18.825a10.974 10.974 0 01-1.875.175C7.603 19 3.328 15.52 2.457 10.96 3.94 6.922 8.053 4 12 4c1.034 0 2.033.118 2.997.344M15 12a3 3 0 01-6 0 3 3 0 016 0zm6 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3.055 3L21 21m-2.094-2.094C17.73 19.667 14.959 21 12 21c-5.066 0-9.432-3.656-10.544-8.549C2.884 7.974 7.052 4.064 12 4c2.31 0 4.456.752 6.169 2.006L19 5.293m-2 2l-2 2"
+                    />
+                  )}
+                </svg>
+              </span>
             </div>
           </div>
-          <div>
-            <button type="submit" disabled={isSigningIn} className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 mt-6 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">
+              Not a member?
+              <a className="underline" href="#">Contact Us</a>
+            </p>
+            <button
+              type="submit"
+              disabled={isSigningIn}
+              className="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
+            >
               {isSigningIn ? 'Signing In...' : 'Sign In'}
             </button>
           </div>
         </form>
-        <p className="mt-8 text-center text-sm text-gray-500">
-          Not a member?{" "}
-          <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-            Contact Us
-          </a>
-        </p>
       </div>
-    </div>
+    </section>
   );
 };
 

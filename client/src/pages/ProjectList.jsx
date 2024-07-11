@@ -5,31 +5,25 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { Link, useParams } from 'react-router-dom';
+
 const ProjectList = () => {
   const { companyId } = useParams();
-
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [projectName, setProjectName] = useState('New');
-  // const [companyId, setCompanyId] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const newProject = async (e) => {
-
     try {
       const response = await axios.post(`${server}/api/project/createProject`, {
         name: newProjectName,
         companyId,
-      },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          }
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
         }
-      );
-      // console.log('Project created:', response.data);
+      });
       setProjects([...projects, response.data]);
       setIsModalOpen(false);
     } catch (err) {
@@ -41,8 +35,7 @@ const ProjectList = () => {
     const fetchProjects = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`${server}/api/project/${companyId}/getprojects`,
-        );
+        const response = await axios.get(`${server}/api/project/${companyId}/getprojects`);
         setProjects(response.data);
       } catch (err) {
         setError(err);
@@ -51,36 +44,29 @@ const ProjectList = () => {
       }
     };
     fetchProjects();
-  }, []);
+  }, [companyId]);
 
   return (
     <div className='flex'>
-     
       <div className="flex justify-center items-center p-20">
         {isLoading && <p>Loading projects...</p>}
         {error && <p>Error fetching projects: {error.message}</p>}
         {!isLoading && !error && (
           <div className="grid grid-cols-1 gap-20 md:grid-cols-4 p-4">
             {projects.map((project) => (
-
-              <Link to='/workspace' >
-                {/* <Link to='/workspace'  key={project.id}> */}
+              <Link to={`/project/${project.id}`} key={project.id}>
                 <div
                   className="folder p-6 max-w-sm bg-[#90ebf5] rounded-t-lg border-t-8 border-[#03518a] shadow-md hover:shadow-lg transition-shadow duration-300"
-                  key={project.id}
                 >
                   <div className="folder-tab bg-[#03518a] p-2 rounded-t-lg"></div>
                   <div className="p-4 text-center">
                     {project.name}
-                    {/* <br /> */}
-                    {/* {project.id && <span>(ID: {project.id})</span>} / */}
                   </div>
                 </div>
               </Link>
             ))}
           </div>
         )}
-
         <Fab
           variant="extended"
           color="primary"
@@ -96,14 +82,13 @@ const ProjectList = () => {
           <Dialog className="relative z-10" open={isModalOpen} onClose={() => setIsModalOpen(false)}>
             <DialogBackdrop
               transition
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
             />
-
             <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
               <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                 <DialogPanel
                   transition
-                  className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                  className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg"
                 >
                   <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
