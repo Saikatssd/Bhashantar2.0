@@ -6,6 +6,7 @@ import { server } from '../main'
 import Sidebar from '../components/Sidebar';
 
 const RoleManager = () => {
+  
   const [open, setOpen] = useState(false);
   const [roleName, setRoleName] = useState('');
   const [isAllowedToDelete, setIsAllowedToDelete] = useState(true);
@@ -58,7 +59,7 @@ const RoleManager = () => {
 
   return (
     <div className='flex'>
-      <Sidebar/>
+      {/* <Sidebar/> */}
     <div className="p-4 w-full">
       <h1 className="text-2xl font-bold mb-4">Role Manager</h1>
       <Button variant="contained" color="primary" onClick={handleOpen}>Create Role</Button>

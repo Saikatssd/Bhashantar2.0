@@ -184,113 +184,68 @@ const Register = () => {
   }, []);
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!isRegistering) {
-      setIsRegistering(true);
-      try {
-
-        const userCredential = await handleSignUp(email, password);
-        const user = userCredential.user;
-        console.log('User created successfully:', user);
-
-        // Send email verification
-        try {
-          await handleSendVerificationEmail(user);
-          toast.success('Registration Successful! Please check your email for a verification link.');
-        } catch (error) {
-          console.error('Error sending email verification:', error);
-          toast.error('An error occurred while sending verification email. Please try again later.');
-        }
-
-
-        const registrationData = {
-          email,
-          name,
-          phoneNo,
-          roleId,
-          companyId,
-        };
-        try {
-          const response = await axios.post(`${server}/api/auth/createUser`, registrationData);
-          console.log('User data sent to backend:', response.data);
-        } catch (error) {
-          console.error('Error sending user data to backend:', error);
-          let message = 'An error occurred while creating your account.';
-          toast.error(message);
-        }
-
-        resetForm();
-      } catch (error) {
-        console.error('Error creating user:', error);
-        let message = 'An error occurred. Please try again.';
-
-        switch (error.code) {
-          case 'auth/email-already-in-use':
-            message = 'The email address is already in use.';
-            break;
-          case 'auth/weak-password':
-            message = 'The password is not strong enough.';
-            break;
-          case 'auth/invalid-email':
-            message = 'The email address is not valid.';
-            break;
-          case 'auth/operation-not-allowed':
-            message = 'This operation is not allowed. Please contact support.';
-            break;
-          case 'auth/too-many-requests':
-            message = 'Too many register attempts. Please try again later.';
-            break;
-          case 'auth/network-request-failed':
-            message = 'Check your internet connection.';
-            break;
-          default:
-            message = error.message || message;
-        }
-
-        toast.error(message);
-      } finally {
-        setIsRegistering(false);
-      }
-    }
-  };
-
-
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   if (!isRegistering) {
   //     setIsRegistering(true);
   //     try {
 
+  //       const userCredential = await handleSignUp(email, password);
+  //       const user = userCredential.user;
+  //       console.log('User created successfully:', user);
 
-  //       const response = await axios.post(
-  //         `${server}/api/auth/createUser`,
-  //         {
-  //           email,
-  //           password,
-  //           name,
-  //           phoneNo,
-  //           roleId,
-  //           companyId,
-  //         },
-  //         {
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //         }
-  //       );
+  //       // Send email verification
+  //       try {
+  //         await handleSendVerificationEmail(user);
+  //         toast.success('Registration Successful! Please check your email for a verification link.');
+  //       } catch (error) {
+  //         console.error('Error sending email verification:', error);
+  //         toast.error('An error occurred while sending verification email. Please try again later.');
+  //       }
 
-  //       toast.success('Registration Successful');
+
+  //       const registrationData = {
+  //         email,
+  //         name,
+  //         phoneNo,
+  //         roleId,
+  //         companyId,
+  //       };
+  //       try {
+  //         const response = await axios.post(`${server}/api/auth/createUser`, registrationData);
+  //         console.log('User data sent to backend:', response.data);
+  //       } catch (error) {
+  //         console.error('Error sending user data to backend:', error);
+  //         let message = 'An error occurred while creating your account.';
+  //         toast.error(message);
+  //       }
+
   //       resetForm();
   //     } catch (error) {
-  //       console.error(error);
-  //       let message = "An error occurred. Please try again.";
+  //       console.error('Error creating user:', error);
+  //       let message = 'An error occurred. Please try again.';
 
-  //       // Check for backend error messages
-  //       if (error.response && error.response.data) {
-  //         message = error.response.data.error || message;
-  //       } else {
-  //         message = error.message || message;
+  //       switch (error.code) {
+  //         case 'auth/email-already-in-use':
+  //           message = 'The email address is already in use.';
+  //           break;
+  //         case 'auth/weak-password':
+  //           message = 'The password is not strong enough.';
+  //           break;
+  //         case 'auth/invalid-email':
+  //           message = 'The email address is not valid.';
+  //           break;
+  //         case 'auth/operation-not-allowed':
+  //           message = 'This operation is not allowed. Please contact support.';
+  //           break;
+  //         case 'auth/too-many-requests':
+  //           message = 'Too many register attempts. Please try again later.';
+  //           break;
+  //         case 'auth/network-request-failed':
+  //           message = 'Check your internet connection.';
+  //           break;
+  //         default:
+  //           message = error.message || message;
   //       }
 
   //       toast.error(message);
@@ -299,6 +254,51 @@ const Register = () => {
   //     }
   //   }
   // };
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isRegistering) {
+      setIsRegistering(true);
+      try {
+
+
+        const response = await axios.post(
+          `${server}/api/auth/createUser`,
+          {
+            email,
+            password,
+            name,
+            phoneNo,
+            roleId,
+            companyId,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        toast.success('Registration Successful');
+        resetForm();
+      } catch (error) {
+        console.error(error);
+        let message = "An error occurred. Please try again.";
+
+        // Check for backend error messages
+        if (error.response && error.response.data) {
+          message = error.response.data.error || message;
+        } else {
+          message = error.message || message;
+        }
+
+        toast.error(message);
+      } finally {
+        setIsRegistering(false);
+      }
+    }
+  };
 
 
   return (
