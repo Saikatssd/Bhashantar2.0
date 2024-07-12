@@ -352,6 +352,7 @@ import axios from 'axios';
 import { server } from './main';
 // import ProjectFiles from './components/ProjectFiles';
 import DashboardWrapper from './components/DashboardWrapper';
+import OfficeEditor from './components/OfficeEditor';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -399,6 +400,7 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/edit" element={<OfficeEditor />} />
           <Route path="/home" element={<DashboardWrapper />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
