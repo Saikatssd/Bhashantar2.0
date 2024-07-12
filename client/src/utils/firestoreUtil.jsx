@@ -5,18 +5,37 @@ import { ref, uploadBytes, getDownloadURL,deleteObject } from 'firebase/storage'
 // Upload a file to a specific project
 export const uploadFile = async (projectId, file) => {
   try {
-    const storageRef = ref(storage, `projects/${projectId}/${file.name}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
+    // Upload the PDF file
+    const pdfStorageRef = ref(storage, `projects/${projectId}/${file.name}`);
+    const pdfSnapshot = await uploadBytes(pdfStorageRef, file);
+    const pdfDownloadURL = await getDownloadURL(pdfSnapshot.ref);
 
+    // Create an empty .rtf file
+    const rtfFileName = file.name.replace('.pdf', '.rtf');
+    const rtfBlob = new Blob([''], { type: 'application/rtf' });
+    
+    // Upload the .rtf file
+    const rtfStorageRef = ref(storage, `projects/${projectId}/${rtfFileName}`);
+    const rtfSnapshot = await uploadBytes(rtfStorageRef, rtfBlob);
+    const rtfDownloadURL = await getDownloadURL(rtfSnapshot.ref);
+
+    // Add file information to the database
     const fileRef = await addDoc(collection(db, 'projects', projectId, 'files'), {
       name: file.name,
-      url: downloadURL,
+      pdfUrl: pdfDownloadURL,
+      rtfUrl: rtfDownloadURL,
       uploadedAt: serverTimestamp(),
-      status: 0, // Initial status set to 2
+      status: 0,
     });
 
-    return { id: fileRef.id, name: file.name, url: downloadURL, uploadedAt: new Date(), status: 0 };
+    return {
+      id: fileRef.id,
+      name: file.name,
+      pdfUrl: pdfDownloadURL,
+      rtfUrl: rtfDownloadURL,
+      uploadedAt: new Date(),
+      status: 0,
+    };
   } catch (error) {
     console.error('Error uploading file:', error);
     throw new Error('Error uploading file');
@@ -25,21 +44,26 @@ export const uploadFile = async (projectId, file) => {
 
 // Delete a file from a specific project
 export const deleteFile = async (projectId, fileId, fileName) => {
-    try {
-      // Delete the file from Firebase Storage
-      const storageRef = ref(storage, `projects/${projectId}/${fileName}`);
-      await deleteObject(storageRef);
-  
-      // Delete the file document from Firestore
-      const fileRef = doc(db, 'projects', projectId, 'files', fileId);
-      await deleteDoc(fileRef);
-  
-      return true;
-    } catch (error) {
-      console.error('Error deleting file:', error);
-      throw new Error('Error deleting file');
-    }
-  };
+  try {
+    // Delete the PDF file from Firebase Storage
+    const pdfStorageRef = ref(storage, `projects/${projectId}/${fileName}`);
+    await deleteObject(pdfStorageRef);
+
+    // Delete the corresponding RTF file from Firebase Storage
+    const rtfFileName = fileName.replace('.pdf', '.rtf');
+    const rtfStorageRef = ref(storage, `projects/${projectId}/${rtfFileName}`);
+    await deleteObject(rtfStorageRef);
+
+    // Delete the file document from Firestore
+    const fileRef = doc(db, 'projects', projectId, 'files', fileId);
+    await deleteDoc(fileRef);
+
+    return true;
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    throw new Error('Error deleting file');
+  }
+};
 
 // Fetch files for a specific project
 export const fetchProjectFiles = async (projectId) => {
@@ -55,7 +79,8 @@ export const fetchProjectFiles = async (projectId) => {
       return {
         id: doc.id,
         name: data.name,
-        url: data.url,
+        pdfUrl: data.pdfUrl,
+        rtfUrl: data.rtfUrl,
         uploadedAt: data.uploadedAt ? data.uploadedAt.toDate() : null,
         status: data.status,
         assignedTo: data.assignedTo || null // Ensure assignedTo field is included
@@ -86,19 +111,24 @@ export const fetchProjectName = async (projectId) => {
   }
 };
  
+
 export const fetchDocumentUrl = async (projectId, fileId) => {
   try {
     const fileDocRef = doc(db, 'projects', projectId, 'files', fileId);
     const fileDoc = await getDoc(fileDocRef);
 
     if (fileDoc.exists()) {
-      return fileDoc.data().url;
+      const data = fileDoc.data();
+      return {
+        pdfUrl: data.pdfUrl,
+        rtfUrl: data.rtfUrl,
+      };
     } else {
       throw new Error('File does not exist');
     }
   } catch (error) {
-    console.error('Error fetching document URL:', error);
-    throw new Error('Error fetching document URL');
+    console.error('Error fetching document URLs:', error);
+    throw new Error('Error fetching document URLs');
   }
 };
 
