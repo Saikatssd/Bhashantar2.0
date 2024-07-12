@@ -13,10 +13,10 @@ export const uploadFile = async (projectId, file) => {
       name: file.name,
       url: downloadURL,
       uploadedAt: serverTimestamp(),
-      status: 2, // Initial status set to 2
+      status: 0, // Initial status set to 2
     });
 
-    return { id: fileRef.id, name: file.name, url: downloadURL, uploadedAt: new Date(), status: 2 };
+    return { id: fileRef.id, name: file.name, url: downloadURL, uploadedAt: new Date(), status: 0 };
   } catch (error) {
     console.error('Error uploading file:', error);
     throw new Error('Error uploading file');

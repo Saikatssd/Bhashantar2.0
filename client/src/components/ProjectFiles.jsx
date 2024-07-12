@@ -9,6 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { auth } from '../utils/firebase';
 import { useAuth } from '../context/AuthContext';
 import { server } from '../main';
+import {updateFileStatus} from '../utils/firestoreUtil'
 
 const ProjectFiles = () => {
   const { projectId } = useParams();

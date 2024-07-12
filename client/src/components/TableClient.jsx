@@ -54,7 +54,7 @@ function Table({
                               color="primary"
                               onClick={() => handleEditClick && handleEditClick(row.id, row.name)}
                             >
-                              Assing
+                              Assign
                             </Button>
                           ) : column.id === 'uploadedAt' && value ? (
                             new Date(value).toLocaleString()
