@@ -341,6 +341,10 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import Profile from './pages/Profile';
 import CompanyInstance from './components/CompanyInstance';
+import Editor from './components/Editor'
+import UserWork from './pages/Users/UserWork'
+
+
 import axios from 'axios';
 // import AdminHome from './pages/Admin/AdminHome';
 // import UserHome from './pages/Users/UserHome';
@@ -400,6 +404,9 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           {/* <Route path="/superAdmin" element={<SuperAdminHome />} /> */}
           <Route path="/company/:companyId/*" element={<CompanyInstance role={role} />} />
+          <Route path = '/editor/:documentId' element={<Editor/>} />
+          <Route path="/myWork" element={<UserWork />} />
+          
           {/* <Route path="/project/:projectId" element={<ProjectFiles />} /> */}
           <Route path="/dashboard" element={<PrivateRoute user={user}><Dashboard role={role} onLogout={handleLogout} /></PrivateRoute>} />
         </Routes>

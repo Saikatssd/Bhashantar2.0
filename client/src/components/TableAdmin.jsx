@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import TableCell from '@mui/material/TableCell';
-import TableRow from '@mui/material/TableRow';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableBody from '@mui/material/TableBody';
-import TablePagination from '@mui/material/TablePagination';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import MuiTable from '@mui/material/Table';
+import React from "react";
+import PropTypes from "prop-types";
+import TableCell from "@mui/material/TableCell";
+import TableRow from "@mui/material/TableRow";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableBody from "@mui/material/TableBody";
+import TablePagination from "@mui/material/TablePagination";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import MuiTable from "@mui/material/Table";
 
 function Table({
   columns,
@@ -22,8 +22,17 @@ function Table({
 }) {
   return (
     <div>
-<h2 style={{ textAlign: 'center', padding: '16px', fontWeight: 'bold', fontSize:"24px" }}>{projectName}</h2>
-<Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <h2
+        style={{
+          textAlign: "center",
+          padding: "16px",
+          fontWeight: "bold",
+          fontSize: "24px",
+        }}
+      >
+        {projectName}
+      </h2>
+      <Paper sx={{ width: "100%", overflow: "hidden" }}>
         <TableContainer sx={{ maxHeight: 700 }}>
           <MuiTable stickyHeader aria-label="sticky table">
             <TableHead>
@@ -31,7 +40,7 @@ function Table({
                 {columns.map((column) => (
                   <TableCell
                     key={column.id}
-                    align={column.align || 'left'}
+                    align={column.align || "left"}
                     style={{ minWidth: column.minWidth }}
                   >
                     {column.label}
@@ -47,20 +56,36 @@ function Table({
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align || 'left'}>
-                          {column.id === 'edit' ? (
-                            
-                              
-                                                            <Button
-                                                            variant="contained"
-                                                            color="primary"
-                                                            onClick={() => handleEditClick && handleEditClick(row.id, row.name)}
-                                                          >
-                                                            Delete
-                                                          </Button>
-                           
-                            
-                          ) : column.id === 'uploadedAt' && value ? (
+                        <TableCell
+                          key={column.id}
+                          align={column.align || "left"}
+                        >
+                          {column.id === "edit" ? (
+                            <div>
+                              {/* <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() =>
+                                  handleEditClick &&
+                                  handleEditClick(row.id, row.name)
+                                  
+                                }
+                                sx = {{marginRight: "5px"}}
+                              >
+                                Assign
+                              </Button> */}
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={() =>
+                                  handleEditClick &&
+                                  handleEditClick(row.id, row.name)
+                                }
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          ) : column.id === "uploadedAt" && value ? (
                             new Date(value).toLocaleString()
                           ) : (
                             value
