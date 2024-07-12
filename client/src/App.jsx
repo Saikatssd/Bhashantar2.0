@@ -358,16 +358,20 @@ const App = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdTokenResult();
-        user.role = token.claims.role;
+        // console.log(token)
+        user.roleName = token.claims.roleName;
+        // user.roleId = token.claims.roleId;
         user.companyId = token.claims.companyId;
         setUser(user);
+        console.log(user)
 
-        const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-          headers: {
-            Authorization: `Bearer ${token.token}`,
-          },
-        });
-        setRole(response.data.roleName);
+        // const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+        //   headers: {
+        //     Authorization: `Bearer ${token.token}`,
+        //   },
+        // });
+        // setRole(response.data.roleName);
+        setRole(user.roleName);
       } else {
         setUser(null);
       }

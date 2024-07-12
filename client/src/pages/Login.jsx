@@ -20,6 +20,7 @@ const Login = () => {
         await handleSignIn(email, password);
         toast.success("Login Successful");
       } catch (error) {
+        console.error(error)
         let message = "An error occurred. Please try again.";
         if (error.code) {
           switch (error.code) {

@@ -11,6 +11,12 @@ export const handleSignUp = async (email, password) => {
     }
 };
 
+// export const handleSignIn = async (email, password) => {
+//     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+//     await userCredential.user.getIdToken(true); // Force refresh to get custom claims
+//     return userCredential.user;
+//   };
+
 export const handleSignIn = async (email, password) => {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);

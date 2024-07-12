@@ -81,6 +81,20 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+//   const [claims, setClaims] = useState({});
+
+// //   useEffect(() => {
+// //     const fetchUserClaims = async () => {
+// //       const user = auth.currentUser;
+// //       if (user) {
+// //         const idTokenResult = await user.getIdTokenResult();
+// //         setClaims(idTokenResult.claims);
+// //       }
+// //     };
+
+// //     fetchUserClaims();
+// //   }, []);
+
     useEffect(() => {
         const fetchUserProfile = async () => {
             const auth = getAuth();
@@ -136,7 +150,7 @@ const Profile = () => {
                     <span className="font-bold text-gray-700">Role: </span>
                     <span className="text-gray-600">{profile.roleName}</span>
                 </div>
-              
+
             </div>
         </div>
     );

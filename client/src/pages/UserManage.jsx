@@ -144,7 +144,7 @@
 
 // src/pages/UserManage.jsx
 import React, { useState, useEffect } from 'react';
-import { db } from '../utils/firebase'; 
+import { db } from '../utils/firebase';
 import {
   Button,
   IconButton,
