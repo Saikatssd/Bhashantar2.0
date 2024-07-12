@@ -49,13 +49,17 @@ function Table({
                       return (
                         <TableCell key={column.id} align={column.align || 'left'}>
                           {column.id === 'edit' ? (
-                            <Button
-                              variant="contained"
-                              color="primary"
-                              onClick={() => handleEditClick && handleEditClick(row.id, row.name)}
-                            >
-                              Assing
-                            </Button>
+                            
+                              
+                                                            <Button
+                                                            variant="contained"
+                                                            color="primary"
+                                                            onClick={() => handleEditClick && handleEditClick(row.id, row.name)}
+                                                          >
+                                                            Delete
+                                                          </Button>
+                           
+                            
                           ) : column.id === 'uploadedAt' && value ? (
                             new Date(value).toLocaleString()
                           ) : (

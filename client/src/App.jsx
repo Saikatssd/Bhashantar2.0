@@ -346,7 +346,7 @@ import axios from 'axios';
 // import UserHome from './pages/Users/UserHome';
 // import SuperAdminHome from './pages/SuperAdmin/SuperAdminHome';
 import { server } from './main';
-import ProjectFiles from './components/ProjectFiles';
+// import ProjectFiles from './components/ProjectFiles';
 import DashboardWrapper from './components/DashboardWrapper';
 
 const App = () => {
@@ -396,7 +396,7 @@ const App = () => {
           <Route path="/profile" element={<Profile />} />
           {/* <Route path="/superAdmin" element={<SuperAdminHome />} /> */}
           <Route path="/company/:companyId/*" element={<CompanyInstance role={role} />} />
-          <Route path="/project/:projectId" element={<ProjectFiles />} />
+          {/* <Route path="/project/:projectId" element={<ProjectFiles />} /> */}
           <Route path="/dashboard" element={<PrivateRoute user={user}><Dashboard role={role} onLogout={handleLogout} /></PrivateRoute>} />
         </Routes>
         <Toaster />

@@ -32,6 +32,7 @@ import PermissionsManage from '../pages/PemissionManage';
 import RoleManage from '../pages/RoleManage';
 import UserWork from '../pages/Users/UserWork'
 import UserManage from '../pages/UserManage';
+import ProjectFiles from './ProjectFiles';
 
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
@@ -43,6 +44,7 @@ const CompanyInstance = ({ role }) => {
         <Routes>
           <Route path="project" element={<ProjectList />} />
           <Route path="myWork" element={<UserWork />} />
+          <Route path="/project/:projectId" element={<ProjectFiles companyId={companyId}/>} />
           {role !== 'user' && (
             <>
 

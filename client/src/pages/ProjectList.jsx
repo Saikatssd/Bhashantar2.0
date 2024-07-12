@@ -54,7 +54,7 @@ const ProjectList = () => {
         {!isLoading && !error && (
           <div className="grid grid-cols-1 gap-20 md:grid-cols-4 p-4">
             {projects.map((project) => (
-              <Link to={`/project/${project.id}`} key={project.id}>
+              <Link to={`/company/${companyId}/project/${project.id}`} key={project.id}>
                 <div
                   className="folder p-6 max-w-sm bg-[#90ebf5] rounded-t-lg border-t-8 border-[#03518a] shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
