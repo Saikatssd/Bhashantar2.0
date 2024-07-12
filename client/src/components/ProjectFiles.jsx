@@ -7,6 +7,7 @@ import { uploadFile, fetchProjectFiles, fetchProjectName, deleteFile } from '../
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { auth } from '../utils/firebase';
+import { useAuth } from '../context/AuthContext';
 import { server } from '../main';
 
 const ProjectFiles = () => {
@@ -19,6 +20,7 @@ const ProjectFiles = () => {
   const [projectName, setProjectName] = useState('');
   const [companyId, setCompanyId] = useState(null);
   const [role, setRole] = useState('');
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -91,6 +93,16 @@ const ProjectFiles = () => {
     }
   };
 
+  const handleFileAssign = async (id) => {
+    try {
+      await updateFileStatus(projectId, id, 3, currentUser.uid);
+      setFiles(files.filter(file => file.id !== id));
+    } catch (err) {
+      console.error('Error updating file status:', err);
+      setError(err);
+    }
+  };
+
   const columns = [
     { id: 'slNo', label: 'Sl. No', minWidth: 50 },
     { id: 'name', label: 'File Name', minWidth: 170 },
@@ -140,7 +152,7 @@ const ProjectFiles = () => {
             rowsPerPage={rowsPerPage}
             handleChangePage={handleChangePage}
             handleChangeRowsPerPage={handleChangeRowsPerPage}
-            handleEditClick={handleFileDelete}
+            handleEditClick={handleFileAssign}
             projectName={projectName}
           />
         )
