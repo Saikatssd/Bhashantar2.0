@@ -33,6 +33,8 @@ import RoleManage from '../pages/RoleManage';
 import UserWork from '../pages/Users/UserWork'
 import UserManage from '../pages/UserManage';
 import ProjectFiles from './ProjectFiles';
+import KyroDocs from './KyroDocs';
+import KyroProjects from './KyroProjects';
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
 
@@ -41,9 +43,13 @@ const CompanyInstance = ({ role }) => {
       <Sidebar companyId={companyId} role={role} />
       <div className="flex-grow">
         <Routes>
-          <Route path="project" element={<ProjectList />} />
+        <Route path="project" element={<ProjectList />} />
+        <Route path="kyro/project" element={<KyroProjects />} />
           {/* <Route path="myWork" element={<UserWork />} /> */}
           <Route path="/project/:projectId" element={<ProjectFiles companyId={companyId}/>} />
+          <Route path="kyro/project/:projectId" element={<KyroDocs />} />
+
+
           {role !== 'user' && (
             <>
 

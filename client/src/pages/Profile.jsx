@@ -72,7 +72,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import {auth} from '../utils/firebase'
+import { auth } from '../utils/firebase'
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { server } from '../main';
 import Sidebar from '../components/Sidebar';
@@ -82,51 +82,51 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-  const [claims, setClaims] = useState({});
 
-  useEffect(() => {
-    const fetchUserClaims = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const idTokenResult = await user.getIdTokenResult();
-        setClaims(idTokenResult.claims);
-        console.log(idTokenResult.claims)
+    //   const [claims, setClaims] = useState({});
+    //   useEffect(() => {
+    //     const fetchUserClaims = async () => {
+    //       const user = auth.currentUser;
+    //       if (user) {
+    //         const idTokenResult = await user.getIdTokenResult();
+    //         setClaims(idTokenResult.claims);
+    //         console.log(idTokenResult.claims)
 
-      }
-    };
-
-    fetchUserClaims();
-  }, []);
-
-    // useEffect(() => {
-    //     const fetchUserProfile = async () => {
-    //         const auth = getAuth();
-    //         onAuthStateChanged(auth, async (user) => {
-    //             if (user) {
-    //                 try {
-    //                     // console.log("user: " + user)
-    //                     const token = await user.getIdToken();
-    //                     const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-    //                         headers: {
-    //                             'Authorization': `Bearer ${token}`
-    //                         }
-    //                     });
-    //                     // console.log("response",response.data)
-    //                     setProfile(response.data);
-    //                 } catch (err) {
-    //                     setError('Error fetching profile');
-    //                 } finally {
-    //                     setLoading(false);
-    //                 }
-    //             } else {
-    //                 setLoading(false);
-    //                 setError('No user is signed in');
-    //             }
-    //         });
+    //       }
     //     };
 
-    //     fetchUserProfile();
-    // }, []);
+    //     fetchUserClaims();
+    //   }, []);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            const auth = getAuth();
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    try {
+                        // console.log("user: " + user)
+                        const token = await user.getIdToken();
+                        const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        // console.log("response",response.data)
+                        setProfile(response.data);
+                    } catch (err) {
+                        setError('Error fetching profile');
+                    } finally {
+                        setLoading(false);
+                    }
+                } else {
+                    setLoading(false);
+                    setError('No user is signed in');
+                }
+            });
+        };
+
+        fetchUserProfile();
+    }, []);
 
     if (loading) {
         return <div className="flex items-center justify-center h-screen text-xl font-bold">Loading...</div>;
@@ -147,15 +147,15 @@ const Profile = () => {
                 </div>
                 <div className="mb-4">
                     <span className="font-bold text-gray-700">Email: </span>
-                    <span className="text-gray-600">{claims.email}</span>
+                    <span className="text-gray-600">{profile.email}</span>
                 </div>
                 <div className="mb-4">
                     <span className="font-bold text-gray-700">Role: </span>
-                    <span className="text-gray-600">{claims.roleName}</span>
+                    <span className="text-gray-600">{profile.roleName}</span>
                 </div>
                 <div className="mb-4">
                     <span className="font-bold text-gray-700">Company: </span>
-                    <span className="text-gray-600">{claims.companyName}</span>
+                    <span className="text-gray-600">{profile.companyId}</span>
                 </div>
             </div>
         </div>

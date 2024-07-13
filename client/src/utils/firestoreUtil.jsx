@@ -68,14 +68,14 @@ export const deleteFile = async (projectId, fileId, fileName) => {
 // Fetch files for a specific project
 export const fetchProjectFiles = async (projectId) => {
   try {
-    console.log(`Fetching files for projectId: ${projectId}`); // Debugging log
+    // console.log(`Fetching files for projectId: ${projectId}`); // Debugging log
     const filesCollection = collection(db, 'projects', projectId, 'files');
     const filesSnapshot = await getDocs(filesCollection);
-    console.log(`filesSnapshot size: ${filesSnapshot.size}`); // Debugging log
+    // console.log(`filesSnapshot size: ${filesSnapshot.size}`); // Debugging log
 
     const files = filesSnapshot.docs.map(doc => {
       const data = doc.data();
-      console.log(`File data for doc ID ${doc.id}:`, data); // Debugging log
+      // console.log(`File data for doc ID ${doc.id}:`, data); // Debugging log
       return {
         id: doc.id,
         name: data.name,
@@ -87,7 +87,7 @@ export const fetchProjectFiles = async (projectId) => {
       };
     });
 
-    console.log(`Fetched files for projectId ${projectId}:`, files); // Debugging log
+    // console.log(`Fetched files for projectId ${projectId}:`, files); // Debugging log
     return files;
   } catch (error) {
     console.error('Error fetching project files:', error);
@@ -167,7 +167,7 @@ export const fetchProjects = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, 'projects'));
     const projects = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    console.log('Projects fetched:', projects); // Debugging log
+    // console.log('Projects fetched:', projects); // Debugging log
     return projects;
   } catch (error) {
     console.error('Error fetching projects:', error); // Detailed logging

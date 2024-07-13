@@ -106,7 +106,7 @@ router.post('/createUser', async (req, res, next) => {
     const userRecord = await auth.createUser({ email, password });
 
     // Set custom claims
-    await auth.setCustomUserClaims(userRecord.uid, { companyId, companyName, roleId, roleName });
+    await auth.setCustomUserClaims(userRecord.uid, { companyId, companyName, roleName });
 
     // Save user data to Firestore
     await db.collection('users').doc(userRecord.uid).set({

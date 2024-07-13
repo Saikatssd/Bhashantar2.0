@@ -13,22 +13,43 @@ const DashboardWrapper = () => {
     const [companyId, setCompanyId] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // useEffect(() => {
+    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //         if (user) {
+    //             const token = await user.getIdTokenResult();
+    //             user.role = token.claims.role;
+    //             user.companyId = token.claims.companyId;
+    //             setUser(user);
+
+    //             const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token.token}`,
+    //                 },
+    //             });
+    //             // console.log("company id", response.data.companyId)
+    //             setRole(response.data.roleName);
+    //             setCompanyId(response.data.companyId);
+    //         } else {
+    //             setUser(null);
+    //         }
+    //         setLoading(false);
+    //     });
+    //     return () => unsubscribe();
+    // }, []);
+
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             if (user) {
                 const token = await user.getIdTokenResult();
-                user.role = token.claims.role;
+                // console.log(token)
+                user.roleName = token.claims.roleName;
                 user.companyId = token.claims.companyId;
                 setUser(user);
+                // console.log(user)
+                setRole(user.roleName);
+                setCompanyId(user.companyId);
 
-                const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-                    headers: {
-                        Authorization: `Bearer ${token.token}`,
-                    },
-                });
-                console.log("company id", response.data.companyId)
-                setRole(response.data.roleName);
-                setCompanyId(response.data.companyId);
             } else {
                 setUser(null);
             }
@@ -36,6 +57,7 @@ const DashboardWrapper = () => {
         });
         return () => unsubscribe();
     }, []);
+
 
     if (loading) {
         return <div>Loading...</div>;

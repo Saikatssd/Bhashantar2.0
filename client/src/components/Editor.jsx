@@ -158,7 +158,7 @@ const TOOLBAR_OPTIONS = [
 ];
 
 const TextEditor = () => {
-  const { documentId } = useParams(); // Ensure 'documentId' matches the route parameter name
+  const { documentId } = useParams(); 
   const [quill, setQuill] = useState();
   const [pdfDocument, setPdfDocument] = useState(null);
   const [rtfDocument, setRtfDocument] = useState(null);
