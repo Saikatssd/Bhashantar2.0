@@ -6,6 +6,9 @@ import AdminHome from '../pages/Admin/AdminHome';
 import SuperAdminHome from '../pages/SuperAdmin/SuperAdminHome';
 import axios from 'axios';
 import { server } from '../main';
+import UserHomeKyrotics from '../pages/Users/KyroticsUserHome';
+import KyroticsUserHome from '../pages/Users/KyroticsUserHome';
+import KyroticsAdminHome from '../pages/Admin/KyroticsAdminHome';
 
 const DashboardWrapper = () => {
     const [user, setUser] = useState(null);
@@ -67,10 +70,22 @@ const DashboardWrapper = () => {
         return <Navigate to="/" />;
     }
 
-    // Allow specific company user to access SuperAdminHome
-    if (role === 'user' && companyId === 'cvy2lr5H0CUVH8o2vsVk') {
-        return <SuperAdminHome />;
+
+    if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+        if (role === 'user') {
+            return <KyroticsUserHome />;
+        }
+        if (role === 'admin') {
+            return <KyroticsAdminHome companyId={companyId} />;
+        }
+
     }
+
+    // Allow specific company user to access SuperAdminHome
+    // if (role === 'user' && companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+    //     return <SuperAdminHome />;
+
+    // }
 
     if (role === 'user') {
         return <UserHome companyId={companyId} />;

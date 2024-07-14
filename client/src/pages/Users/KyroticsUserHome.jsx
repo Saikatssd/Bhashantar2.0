@@ -6,8 +6,8 @@ import { Link } from 'react-router-dom';
 import { server } from '../../main';
 
 
-const UserHomeKyrotics = () => {
-    // const UserHomeKyrotics = ({ userCompanyId }) => {
+const KyroticsUserHome = () => {
+    // const KyroticsUserHome = ({ userCompanyId }) => {
     const userCompanyId = 'cvy2lr5H0CUVH8o2vsVk'
 
     const [companies, setCompanies] = useState([]);
@@ -66,4 +66,4 @@ const UserHomeKyrotics = () => {
     );
 };
 
-export default UserHomeKyrotics;
+export default KyroticsUserHome;

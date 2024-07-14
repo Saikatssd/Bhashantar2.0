@@ -8,7 +8,6 @@ const projectRoutes = require('./routes/project');
 const companyRoutes = require('./routes/company');
 const documentRoutes = require('./routes/document');
 const permissionRoutes = require('./routes/permission');
-const dashboardRoutes = require('./routes/Dashboard');
 
 const app = express();
 
@@ -36,7 +35,6 @@ app.use('/api/company', companyRoutes);
 app.use('/api/project', projectRoutes);
 app.use('/api/document', documentRoutes);
 app.use('/api/permission', permissionRoutes);
-app.use('/api/dashboard', dashboardRoutes);
 
 app.use(errorMiddleware);
 

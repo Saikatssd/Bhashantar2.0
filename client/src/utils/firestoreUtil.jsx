@@ -174,3 +174,36 @@ export const fetchProjects = async () => {
     throw new Error('Error fetching projects');
   }
 };
+
+
+// Fetch the user's name by their ID
+export const fetchUserNameById = async (userId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userDocRef);
+    if (userDoc.exists()) {
+      // console.log("username",userDoc.data().name)
+      return userDoc.data().name;
+    } else {
+      throw new Error('User not found');
+    }
+  } catch (error) {
+    console.error('Error fetching user name:', error);
+    throw error;
+  }
+};
+
+
+export const fetchUsers = async () => {
+  try {
+    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const users = usersSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    return users;
+  } catch (error) {
+    console.error('Error fetching users:', error); // Detailed logging
+    throw new Error('Error fetching users');
+  }
+}

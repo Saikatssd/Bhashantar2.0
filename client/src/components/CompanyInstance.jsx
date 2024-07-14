@@ -35,6 +35,8 @@ import UserManage from '../pages/UserManage';
 import ProjectFiles from './ProjectFiles';
 import KyroDocs from './KyroDocs';
 import KyroProjects from './KyroProjects';
+import AdminDocs from './AdminDocs';
+import UploadDocument from './UploadDocument';
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
 
@@ -43,19 +45,26 @@ const CompanyInstance = ({ role }) => {
       <Sidebar companyId={companyId} role={role} />
       <div className="flex-grow">
         <Routes>
-        <Route path="project" element={<ProjectList />} />
-        <Route path="kyro/project" element={<KyroProjects />} />
+          <Route path="project" element={<ProjectList />} />
+          {/* <Route path="kyro/project" element={<KyroProjects />} /> */}
           {/* <Route path="myWork" element={<UserWork />} /> */}
-          <Route path="/project/:projectId" element={<ProjectFiles companyId={companyId}/>} />
-          <Route path="kyro/project/:projectId" element={<KyroDocs />} />
+          {/* <Route path="kyro/project/:projectId" element={<KyroDocs />} /> */}
+          {role === 'user' && (
+            <>
+              <Route path="/project/:projectId" element={<ProjectFiles />} />
+            </>
+          )}
 
 
           {role !== 'user' && (
             <>
-
+              <Route path="project/:projectId" element={<AdminDocs />} />
+              <Route path="uploadDocument" element={<UploadDocument />} />
               <Route path="permissionManage" element={<PermissionsManage />} />
               <Route path="roleManage" element={<RoleManage />} />
               <Route path="userManage" element={<UserManage companyId={companyId} />} />
+
+
             </>
           )}
         </Routes>

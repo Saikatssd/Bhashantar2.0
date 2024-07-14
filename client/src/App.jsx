@@ -12,7 +12,7 @@ import CompanyInstance from './components/CompanyInstance';
 import Editor from './components/Editor'
 import UserWork from './pages/Users/UserWork'
 import DashboardWrapper from './components/DashboardWrapper';
-import UserHomeKyrotics from './pages/Users/UserHomeKyrotics';
+import UserHomeKyrotics from './pages/Users/KyroticsUserHome';
 import KyroInstance from './components/KyroInstance';
 // import OfficeEditor from './components/OfficeEditor';
 
@@ -49,11 +49,11 @@ const App = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/userKyro" element={<UserHomeKyrotics />} />
+          {/* <Route path="/userKyro" element={<UserHomeKyrotics />} /> */}
           <Route path="/home" element={<DashboardWrapper />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/kyro/:companyId/*" element={<KyroInstance />} />
+          <Route path="/kyro/:companyId/*" element={<KyroInstance role={role}/>} />
           {/* <Route path="/superAdmin" element={<SuperAdminHome />} /> */}
           <Route path="/company/:companyId/*" element={<CompanyInstance role={role} />} />
           <Route path='/editor/:documentId' element={<Editor />} />
