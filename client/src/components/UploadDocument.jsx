@@ -46,16 +46,31 @@ const UploadDocument = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdTokenResult();
-        const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-          headers: {
-            Authorization: `Bearer ${token.token}`,
-          },
-        });
-        setRole(response.data.roleName);
+        // console.log(token)
+        user.roleName = token.claims.roleName;
+        user.companyId = token.claims.companyId;
+
+        setRole(user.roleName);
+       
       }
     });
     return () => unsubscribe();
   }, []);
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged(async (user) => {
+  //     if (user) {
+  //       const token = await user.getIdTokenResult();
+  //       const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token.token}`,
+  //         },
+  //       });
+  //       setRole(response.data.roleName);
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, []);
 
   const newProject = async (e) => {
     try {

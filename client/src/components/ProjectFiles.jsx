@@ -27,19 +27,34 @@ const ProjectFiles = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdTokenResult();
-        const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-          headers: {
-            Authorization: `Bearer ${token.token}`,
-          },
-        });
-        console.log("company id", response.data.companyId);
-        console.log("role", response.data.roleName);
-        setCompanyId(response.data.companyId);
-        setRole(response.data.roleName);
+        // console.log(token)
+        user.roleName = token.claims.roleName;
+        user.companyId = token.claims.companyId;
+
+        setRole(user.roleName);
+        setCompanyId(user.companyId);
       }
     });
     return () => unsubscribe();
   }, []);
+
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged(async (user) => {
+  //     if (user) {
+  //       const token = await user.getIdTokenResult();
+  //       const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+  //         headers: {
+  //           Authorization: `Bearer ${token.token}`,
+  //         },
+  //       });
+  //       console.log("company id", response.data.companyId);
+  //       console.log("role", response.data.roleName);
+  //       setCompanyId(response.data.companyId);
+  //       setRole(response.data.roleName);
+  //     }
+  //   });
+  //   return () => unsubscribe();
+  // }, []);
 
   useEffect(() => {
     if (companyId && role) {

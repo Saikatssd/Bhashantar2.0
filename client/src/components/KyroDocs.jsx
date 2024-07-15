@@ -24,21 +24,37 @@ const KyroDocs = () => {
     const [openModal, setOpenModal] = useState(false);
     const [selectedFileId, setSelectedFileId] = useState(null);
 
+
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                const token = await user.getIdTokenResult();
-                const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-                    headers: {
-                        Authorization: `Bearer ${token.token}`,
-                    },
-                });
-                setCompanyId(response.data.companyId);
-                setRole(response.data.roleName);
-            }
+          if (user) {
+            const token = await user.getIdTokenResult();
+            // console.log(token)
+            user.roleName = token.claims.roleName;
+            user.companyId = token.claims.companyId;
+    
+            setRole(user.roleName);
+            setCompanyId(user.companyId);
+          }
         });
         return () => unsubscribe();
-    }, []);
+      }, []);
+
+    // useEffect(() => {
+    //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    //         if (user) {
+    //             const token = await user.getIdTokenResult();
+    //             const response = await axios.get(`${server}/api/auth/getUserProfile`, {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token.token}`,
+    //                 },
+    //             });
+    //             setCompanyId(response.data.companyId);
+    //             setRole(response.data.roleName);
+    //         }
+    //     });
+    //     return () => unsubscribe();
+    // }, []);
 
     useEffect(() => {
         if (companyId) {
