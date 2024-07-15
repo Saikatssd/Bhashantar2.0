@@ -10,7 +10,7 @@ import { uploadFile, fetchProjectFiles, deleteFile } from '../utils/firestoreUti
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { server } from '../main';
-import TableAdmin from './TableAdmin';
+import TableUpload from './TableUpload';
 
 const UploadDocument = () => {
   const { companyId } = useParams();
@@ -181,7 +181,7 @@ const UploadDocument = () => {
             {error && <p>Error: {error.message}</p>}
             {!isLoading && !error && files.length === 0 && <p>No files found.</p>}
             {!isLoading && !error && files.length > 0 && (
-              <TableAdmin
+              <TableUpload
                 columns={columns}
                 rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
                 page={page}
@@ -277,7 +277,7 @@ export default UploadDocument;
 // import Button from '@mui/material/Button';
 // import CircularProgress from '@mui/material/CircularProgress';
 // import { server } from '../main';
-// import TableAdmin from './TableAdmin';
+// import TableUpload from './TableUpload';
 
 // const UploadDocument = () => {
 //   const { companyId } = useParams();
@@ -448,7 +448,7 @@ export default UploadDocument;
 //             {error && <p>Error: {error.message}</p>}
 //             {!isLoading && !error && files.length === 0 && <p>No files found.</p>}
 //             {!isLoading && !error && files.length > 0 && (
-//               <TableAdmin
+//               <TableUpload
 //                 columns={columns}
 //                 rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
 //                 page={page}

@@ -8,7 +8,7 @@ import { Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import { Viewer } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-import { fetchDocumentUrl, updateFileStatus } from '../utils/firestoreUtil'; 
+import { fetchDocumentUrl, updateFileStatus } from '../utils/firestoreUtil';
 import { useAuth } from '../context/AuthContext';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
@@ -145,6 +145,7 @@ import { useNavigate } from 'react-router-dom';
 
 // export default TextEditor;
 
+import { auth } from '../utils/firebase';
 
 const TOOLBAR_OPTIONS = [
   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -158,109 +159,131 @@ const TOOLBAR_OPTIONS = [
 ];
 
 const TextEditor = () => {
-  const { documentId } = useParams(); 
+  const { documentId } = useParams();
   const [quill, setQuill] = useState();
   const [pdfDocument, setPdfDocument] = useState(null);
   const [rtfDocument, setRtfDocument] = useState(null);
+  const [role, setRole] = useState(null);
+  const [companyId, setCompanyId] = useState(null);
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-    useEffect(() => {
-      const fetchDocument = async () => {
-        try {
-          console.log("Fetching document URL for documentId:", documentId); // Debugging log
-          const [projectId, fileId] = documentId.split('_'); // Split the concatenated string
-          if (!projectId || !fileId) {
-            throw new Error('Invalid document ID format');
-          }
-          const documentUrls = await fetchDocumentUrl(projectId, fileId);
-          console.log("Fetched document URLs:", documentUrls); // Debugging log
-          if (documentUrls) {
-            console.log("Pdf url : ", documentUrls.pdfUrl)
-            setPdfDocument(documentUrls.pdfUrl); // Set the PDF URL for the PDF Viewer
-            console.log("Pdf url : ", documentUrls.rtfUrl)
-            setRtfDocument(documentUrls.rtfUrl); // Set the RTF URL for the RTF Editor
-          } else {
-            console.warn("No URLs found for documentId:", documentId); // Debugging log
-          }
-        } catch (error) {
-          console.error("Error fetching document URLs:", error);
-        }
-      };
-  
-      if (documentId) {
-        fetchDocument();
-      } else {
-        console.error("Document ID is undefined"); // Debugging log
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdTokenResult();
+        // console.log(token)
+        user.roleName = token.claims.roleName;
+        user.companyId = token.claims.companyId;
+
+        setRole(user.roleName);
+        setCompanyId(user.companyId);
       }
-    }, [documentId]);
-  
-    const wrapperRef = useCallback((wrapper) => {
-      if (wrapper == null) return;
-  
-      wrapper.innerHTML = "";
-      const editor = document.createElement("div");
-      wrapper.append(editor);
-      const q = new Quill(editor, {
-        theme: "snow",
-        modules: { toolbar: TOOLBAR_OPTIONS },
-      });
-      q.disable();
-      q.setText("Loading...");
-      setQuill(q);
-  
-      if (rtfDocument) {
-        fetch(rtfDocument)
-          .then(response => response.text())
-          .then(text => {
-            q.setText(text);
-            q.enable();
-          })
-          .catch(error => {
-            console.error('Error loading RTF document:', error);
-            q.setText('Error loading document');
-          });
-      }
-    }, [rtfDocument]);
-  
-    const handleSaveClick = async () => {
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const fetchDocument = async () => {
       try {
-        const [projectId, fileId] = documentId.split('_');
-        await updateFileStatus(projectId, fileId, 4, currentUser.uid);
-        navigate('/mywork');
-        // navigate(`/company/${companyId}/mywork`);
-        console.log('Document status updated to 4');
-        // Optionally, you can add more logic here, such as navigating back or showing a success message.
-      } catch (err) {
-        console.error('Error updating document status:', err);
+        console.log("Fetching document URL for documentId:", documentId); // Debugging log
+        const [projectId, fileId] = documentId.split('_'); // Split the concatenated string
+        if (!projectId || !fileId) {
+          throw new Error('Invalid document ID format');
+        }
+        const documentUrls = await fetchDocumentUrl(projectId, fileId);
+        console.log("Fetched document URLs:", documentUrls); // Debugging log
+        if (documentUrls) {
+          console.log("Pdf url : ", documentUrls.pdfUrl)
+          setPdfDocument(documentUrls.pdfUrl); // Set the PDF URL for the PDF Viewer
+          console.log("Pdf url : ", documentUrls.rtfUrl)
+          setRtfDocument(documentUrls.rtfUrl); // Set the RTF URL for the RTF Editor
+        } else {
+          console.warn("No URLs found for documentId:", documentId); // Debugging log
+        }
+      } catch (error) {
+        console.error("Error fetching document URLs:", error);
       }
     };
-  
-    return (
-      <div className="container">
-        <div style={{ display: "flex" }}>
-          <div style={{ width: "50%", paddingRight: "10px", height: "90vh", overflow: "auto" }}>
-            {pdfDocument ? (
-              <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js">
-                <Viewer fileUrl={pdfDocument} />
-              </Worker>
-            ) : (
-              <p>Loading PDF...</p>
-            )}
-          </div>
-          <div ref={wrapperRef} style={{ width: "50%" }}></div>
-        </div>
-        <Button
-          variant="contained"
-          color="success"
-          size="large"
-          sx={{ position: 'fixed', bottom: 25, right: 16, width: '100px', height: '55px', fontSize: '18px' }}
-          onClick={handleSaveClick}
-        >
-          Save
-        </Button>
-      </div>
-    );
+
+    if (documentId) {
+      fetchDocument();
+    } else {
+      console.error("Document ID is undefined"); // Debugging log
+    }
+  }, [documentId]);
+
+  const wrapperRef = useCallback((wrapper) => {
+    if (wrapper == null) return;
+
+    wrapper.innerHTML = "";
+    const editor = document.createElement("div");
+    wrapper.append(editor);
+    const q = new Quill(editor, {
+      theme: "snow",
+      modules: { toolbar: TOOLBAR_OPTIONS },
+    });
+    q.disable();
+    q.setText("Loading...");
+    setQuill(q);
+
+    if (rtfDocument) {
+      fetch(rtfDocument)
+        .then(response => response.text())
+        .then(text => {
+          q.setText(text);
+          q.enable();
+        })
+        .catch(error => {
+          console.error('Error loading RTF document:', error);
+          q.setText('Error loading document');
+        });
+    }
+  }, [rtfDocument]);
+
+  const handleSaveClick = async () => {
+    try {
+      const [projectId, fileId] = documentId.split('_');
+      if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+        await updateFileStatus(projectId, id, 4, currentUser.uid);
+      }
+      else {
+        await updateFileStatus(projectId, id, 6, currentUser.uid);
+      }
+      navigate('/mywork');
+      // navigate(`/company/${companyId}/mywork`);
+      console.log('Document status updated to 4 or 6');
+      // Optionally, you can add more logic here, such as navigating back or showing a success message.
+    } catch (err) {
+      console.error('Error updating document status:', err);
+    }
   };
-  
-  export default TextEditor;
+
+  return (
+    <div className="container">
+      <div style={{ display: "flex" }}>
+        <div style={{ width: "50%", paddingRight: "10px", height: "90vh", overflow: "auto" }}>
+          {pdfDocument ? (
+            <Worker workerUrl="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js">
+              <Viewer fileUrl={pdfDocument} />
+            </Worker>
+          ) : (
+            <p>Loading PDF...</p>
+          )}
+        </div>
+        <div ref={wrapperRef} style={{ width: "50%" }}></div>
+      </div>
+      <Button
+        variant="contained"
+        color="success"
+        size="large"
+        sx={{ position: 'fixed', bottom: 25, right: 16, width: '100px', height: '55px', fontSize: '18px' }}
+        onClick={handleSaveClick}
+      >
+        Save
+      </Button>
+    </div>
+  );
+};
+
+export default TextEditor;

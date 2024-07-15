@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import MuiTable from "@mui/material/Table";
 
-function Table({
+function TableUpload({
   columns,
   rows = [],
   page,
@@ -112,7 +112,7 @@ function Table({
   );
 }
 
-Table.propTypes = {
+TableUpload.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -130,9 +130,9 @@ Table.propTypes = {
   projectName: PropTypes.string.isRequired,
 };
 
-Table.defaultProps = {
+TableUpload.defaultProps = {
   rows: [],
   handleEditClick: null,
 };
 
-export default Table;
+export default TableUpload;

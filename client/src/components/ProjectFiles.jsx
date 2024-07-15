@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import TableClient from './TableClient';
-import TableAdmin from './TableAdmin';
+// import TableAdmin from './TableUpload';
 import { uploadFile, fetchProjectFiles, fetchProjectName, deleteFile } from '../utils/firestoreUtil';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { auth } from '../utils/firebase';
 import { useAuth } from '../context/AuthContext';
 import { server } from '../main';
-import {updateFileStatus} from '../utils/firestoreUtil'
+import { updateFileStatus } from '../utils/firestoreUtil'
 
 const ProjectFiles = () => {
   const { projectId } = useParams();
@@ -48,7 +48,7 @@ const ProjectFiles = () => {
         try {
           const projectFiles = await fetchProjectFiles(projectId);
           const projectName = await fetchProjectName(projectId);
-          const filteredFiles = projectFiles.filter(file => 
+          const filteredFiles = projectFiles.filter(file =>
             (file.status === 2 && companyId === 'cvy2lr5H0CUVH8o2vsVk' && role === 'user') ||
             (file.status === 4 && companyId !== 'cvy2lr5H0CUVH8o2vsVk' && role === 'user') ||
             (role === 'admin' && file.status === 0)
@@ -81,22 +81,27 @@ const ProjectFiles = () => {
     }
   };
 
-  const handleFileDelete = async (fileId, fileName) => {
-    try {
-      setIsLoading(true);
-      await deleteFile(projectId, fileId, fileName);
-      setFiles(files.filter(file => file.id !== fileId));
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Error deleting file:', err);
-      setError(err);
-      setIsLoading(false);
-    }
-  };
+  // const handleFileDelete = async (fileId, fileName) => {
+  //   try {
+  //     setIsLoading(true);
+  //     await deleteFile(projectId, fileId, fileName);
+  //     setFiles(files.filter(file => file.id !== fileId));
+  //     setIsLoading(false);
+  //   } catch (err) {
+  //     console.error('Error deleting file:', err);
+  //     setError(err);
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleFileAssign = async (id) => {
     try {
-      await updateFileStatus(projectId, id, 3, currentUser.uid);
+      if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+        await updateFileStatus(projectId, id, 3, currentUser.uid);
+      }
+      else {
+        await updateFileStatus(projectId, id, 5, currentUser.uid);
+      }
       setFiles(files.filter(file => file.id !== id));
     } catch (err) {
       console.error('Error updating file status:', err);
@@ -134,18 +139,7 @@ const ProjectFiles = () => {
       {error && <p>Error: {error.message}</p>}
       {!isLoading && !error && files.length === 0 && <p>No files found.</p>}
       {!isLoading && !error && files.length > 0 && (
-        role === 'admin' ? (
-          <TableAdmin
-            columns={columns}
-            rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
-            page={page}
-            rowsPerPage={rowsPerPage}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-            handleEditClick={handleFileDelete}
-            projectName={projectName}
-          />
-        ) : (
+        <>
           <TableClient
             columns={columns}
             rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
@@ -156,9 +150,32 @@ const ProjectFiles = () => {
             handleEditClick={handleFileAssign}
             projectName={projectName}
           />
-        )
+        </>
+        // role === 'admin' ? (
+        //   <TableAdmin
+        //     columns={columns}
+        //     rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
+        //     page={page}
+        //     rowsPerPage={rowsPerPage}
+        //     handleChangePage={handleChangePage}
+        //     handleChangeRowsPerPage={handleChangeRowsPerPage}
+        //     handleEditClick={handleFileDelete}
+        //     projectName={projectName}
+        //   />
+        // ) : (
+        //   <TableClient
+        //     columns={columns}
+        //     rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
+        //     page={page}
+        //     rowsPerPage={rowsPerPage}
+        //     handleChangePage={handleChangePage}
+        //     handleChangeRowsPerPage={handleChangeRowsPerPage}
+        //     handleEditClick={handleFileAssign}
+        //     projectName={projectName}
+        //   />
+        // )
       )}
-      {role === 'admin' && (
+      {/* {role === 'admin' && (
         <Button
           variant="contained"
           color="primary"
@@ -167,7 +184,7 @@ const ProjectFiles = () => {
         >
           Upload Files
         </Button>
-      )}
+      )} */}
     </div>
   );
 };

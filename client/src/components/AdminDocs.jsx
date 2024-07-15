@@ -398,7 +398,7 @@ import UserSelectModal from './UserSelectModal';
 import { auth } from '../utils/firebase';
 import axios from 'axios';
 import { server } from '../main';
-import Table from './TableAdmin';
+import Table from './TableUpload';
 
 const columnsReadyForWork = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
@@ -472,14 +472,14 @@ const AdminDocs = () => {
             return {
               ...file,
               assignedTo: assignedUser,
-              completedBy: completedUser 
+              completedBy: completedUser
             };
           }));
         };
 
-        const readyForWork = await fetchFileUsers(projectFiles.filter((file) => file.status === 2));
-        const inProgress = await fetchFileUsers(projectFiles.filter((file) => file.status === 3));
-        const completed = await fetchFileUsers(projectFiles.filter((file) => file.status === 4));
+        const readyForWork = await fetchFileUsers(projectFiles.filter((file) => (companyId === 'cvy2lr5H0CUVH8o2vsVk') ? file.status === 2 : file.status === 4));
+        const inProgress = await fetchFileUsers(projectFiles.filter((file) => (companyId === 'cvy2lr5H0CUVH8o2vsVk') ? file.status === 3 : file.status === 5));
+        const completed = await fetchFileUsers(projectFiles.filter((file) =>(companyId === 'cvy2lr5H0CUVH8o2vsVk') ? file.status === 4 : file.status === 6));
 
         setReadyForWorkFiles(readyForWork.map((file, index) => ({ ...file, slNo: index + 1 })));
         setInProgressFiles(inProgress.map((file, index) => ({ ...file, slNo: index + 1 })));
@@ -552,7 +552,7 @@ const AdminDocs = () => {
 
       <TabPanel value={tabValue} index={0}>
         <KyroticsTableAdmin
-        // <Table
+          // <Table
           columns={columnsReadyForWork}
           rows={readyForWorkFiles}
           page={page}
@@ -572,7 +572,7 @@ const AdminDocs = () => {
           rowsPerPage={rowsPerPage}
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
-          // projectName={projectName}
+        // projectName={projectName}
         />
       </TabPanel>
 

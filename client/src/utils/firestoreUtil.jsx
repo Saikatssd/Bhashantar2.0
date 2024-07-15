@@ -1,3 +1,8 @@
+//status notation
+//0-->client End for delete //1-->Ml 
+//(KyroticsSide) 2-->Ready-for-work//3-->Assigned to User//4-->completed
+//(ClientSide)4-->Ready-for-work//5-->Assigned to User//6-->completed //7-->
+
 import { db, storage } from './firebase';
 import { collection, addDoc, getDocs, getDoc, doc, updateDoc, serverTimestamp, query, where, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL,deleteObject } from 'firebase/storage';
