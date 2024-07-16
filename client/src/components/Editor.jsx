@@ -294,7 +294,7 @@
 // import 'react-quill/dist/quill.snow.css';
 // import { fetchDocumentUrl, updateDocumentContent } from '../utils/firestoreUtil'; // Make sure to implement updateDocumentContent
 
-// const DocumentEditor = ({ projectId, fileId }) => {
+// const Editor = ({ projectId, fileId }) => {
 //   const [htmlContent, setHtmlContent] = useState('');
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
@@ -344,23 +344,124 @@
 //   );
 // };
 
-// export default DocumentEditor;
+// export default Editor;
 
 
-import React, { useEffect, useState } from 'react';
+// import React, { useEffect, useState, useRef } from 'react';
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
+// import { Document, Page } from 'react-pdf';
+// import { fetchDocumentUrl, updateDocumentContent } from '../utils/firestoreUtil';
+// import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+
+// const Editor = () => {
+//   const projectId = 'wTSgFZVPvuFnGhyz1fZ6';
+//   const fileId = 'gdYDnGzgzjBtE0r2ORCr';
+//   const quillRef = useRef(null); // Reference to Quill editor instance
+//   const [htmlContent, setHtmlContent] = useState('');
+//   const [pdfUrl, setPdfUrl] = useState('');
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [autosaveInterval, setAutosaveInterval] = useState(20000); // Autosave every 5 seconds
+
+
+//   useEffect(() => {
+//     const fetchContent = async () => {
+//       try {
+//         const { htmlUrl, pdfUrl } = await fetchDocumentUrl(projectId, fileId);
+//         const response = await fetch(htmlUrl);
+//         const text = await response.text();
+//         setHtmlContent(text);
+//         setPdfUrl(pdfUrl);
+
+//       } catch (err) {
+//         setError('Error fetching document');
+//         console.error('Error fetching document:', err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchContent();
+
+//     const autosave = async () => {
+//       if (!htmlContent) return; // Don't save if content is empty
+
+//       try {
+//         const blob = new Blob([htmlContent], { type: 'text/html' });
+//         await updateDocumentContent(projectId, fileId, blob);
+//         console.log('Document saved successfully (autosave)');
+//       } catch (err) {
+//         console.error('Error saving document (autosave):', err);
+//       }
+//     };
+
+
+//     // Set up autosave interval (clear previous interval if necessary)
+//     const intervalId = setInterval(autosave, autosaveInterval);
+//     return () => clearInterval(intervalId); // Clean up interval on unmount
+//   }, [projectId, fileId, htmlContent, autosaveInterval]);
+
+//   const handleSave = async () => {
+//     try {
+//       const blob = new Blob([htmlContent], { type: 'text/html' });
+//       await updateDocumentContent(projectId, fileId, blob);
+//       alert('Document saved successfully');
+//     } catch (err) {
+//       setError('Error saving document');
+//       console.error('Error saving document:', err);
+//     }
+//   };
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (error) {
+//     return <div>{error}</div>;
+//   }
+
+//   return (
+//     <div style={{ display: 'flex', height: '100vh' }}>
+//       <div style={{ flex: 1, overflow: 'auto', padding: '10px', borderRight: '1px solid #ccc' }}>
+//         {/* <Document file={pdfUrl} onLoadError={console.error}>
+//           <Page pageNumber={1} />
+//         </Document> */}
+
+//         <div>
+//           <iframe src={pdfUrl} width="100%" height="1000px" />
+//         </div>
+//       </div>
+//       <div style={{ flex: 1, padding: '10px' }}>
+//         <ReactQuill value={htmlContent} ref={quillRef} onChange={setHtmlContent} />
+//         <button onClick={handleSave} style={{ marginTop: '10px' }}>Save</button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Editor;
+
+
+
+
+import React, { useEffect, useState, useRef } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { Document, Page } from 'react-pdf';
 import { fetchDocumentUrl, updateDocumentContent } from '../utils/firestoreUtil';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import useDebounce from '../hooks/useDebounce'; // Import the custom hook
 
-const DocumentEditor = () => {
+const Editor = () => {
   const projectId = 'wTSgFZVPvuFnGhyz1fZ6';
   const fileId = 'gdYDnGzgzjBtE0r2ORCr';
+  const quillRef = useRef(null); // Reference to Quill editor instance
   const [htmlContent, setHtmlContent] = useState('');
   const [pdfUrl, setPdfUrl] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
 
   useEffect(() => {
     const fetchContent = async () => {
@@ -377,9 +478,24 @@ const DocumentEditor = () => {
         setLoading(false);
       }
     };
-
     fetchContent();
   }, [projectId, fileId]);
+
+  useEffect(() => {
+    const saveContent = async () => {
+      if (!debouncedHtmlContent) return; 
+
+      try {
+        const blob = new Blob([debouncedHtmlContent], { type: 'text/html' });
+        await updateDocumentContent(projectId, fileId, blob);
+        // console.log('Document saved successfully (debounced save)');
+      } catch (err) {
+        console.error('Error saving document (debounced save):', err);
+      }
+    };
+
+    saveContent();
+  }, [debouncedHtmlContent, projectId, fileId]);
 
   const handleSave = async () => {
     try {
@@ -403,16 +519,20 @@ const DocumentEditor = () => {
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
       <div style={{ flex: 1, overflow: 'auto', padding: '10px', borderRight: '1px solid #ccc' }}>
-        <Document file={pdfUrl} onLoadError={console.error}>
+        {/* <Document file={pdfUrl} onLoadError={console.error}>
           <Page pageNumber={1} />
-        </Document>
+        </Document> */}
+
+        <div>
+          <iframe src={pdfUrl} width="100%" height="1000px" />
+        </div>
       </div>
       <div style={{ flex: 1, padding: '10px' }}>
-        <ReactQuill value={htmlContent} onChange={setHtmlContent} />
+        <ReactQuill value={htmlContent} ref={quillRef} onChange={setHtmlContent} />
         <button onClick={handleSave} style={{ marginTop: '10px' }}>Save</button>
       </div>
     </div>
   );
 };
 
-export default DocumentEditor;
+export default Editor;
