@@ -449,7 +449,7 @@ import {
 import useDebounce from "../hooks/useDebounce"; // Import the custom hook
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import {auth} from '../utils/firebase'
+import { auth } from '../utils/firebase'
 
 const Editor = () => {
   // const projectId = "wTSgFZVPvuFnGhyz1fZ6";
@@ -462,6 +462,55 @@ const Editor = () => {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+
+
+  // const formats = [
+  //   'font','size',
+  //   'bold','italic','underline','strike',
+  //   'color','background',
+  //   'script',
+  //   'header','blockquote','code-block',
+  //   'indent','list',
+  //   'direction','align',
+  //   'link','image','video','formula',
+  // ]
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "script",
+    "link",
+    "color",
+    "image",
+    "background",
+    "align",
+    "size",
+    "font"
+  ];
+
+
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ["bold", "italic", "underline", "strike", "blockquote", "formula"],
+      [{ size: [] }],
+      [{ font: [] }],
+      [{ align: ["right", "center", "justify"] }],
+      [{ list: "ordered" }, { list: "bullet" }, { indent: '-1' },
+      { indent: '+1' }],
+      [{ 'script': 'sub' }, { 'script': 'super' }],
+      ["link", "image"],
+      [{ color: [] }],
+      [{ background: [] }],
+      ['clean']
+    ]
+  };
 
 
   const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
@@ -478,7 +527,7 @@ const Editor = () => {
 
         setCompanyId(user.companyId);
       }
-      else{
+      else {
         setUser(null);
       }
     });
@@ -565,8 +614,12 @@ const Editor = () => {
       </div>
       <div style={{ flex: 1, padding: "10px" }}>
         <ReactQuill
+          // theme="snow"
           value={htmlContent}
           ref={quillRef}
+          formats={formats}
+          modules={modules}
+
           onChange={setHtmlContent}
         />
         <Button
