@@ -16,15 +16,18 @@ function Table2({
   rows = [],
   page,
   rowsPerPage,
+  projectId,
   handleChangePage,
   handleChangeRowsPerPage,
 }) {
   const navigate = useNavigate();
 
-  const handleEditClick = (projectId, fileId) => {
-    const documentId = `${projectId}_${fileId}`; // Concatenate projectId and fileId with an underscore
+  const handleEditClick = (projectId, documentId) => {
+    // const documentId = `${projectId}_${fileId}`; // Concatenate projectId and fileId with an underscore
+    console.log('Navigating to editor with document ID:', projectId);
     console.log('Navigating to editor with document ID:', documentId); // Debugging log
-    navigate(`/editor/${documentId}`);
+    navigate(`/editor/${projectId}/${documentId}`);
+
   };
   return (
     <div>
@@ -57,7 +60,7 @@ function Table2({
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={() => handleEditClick(row.projectId, row.id)}
+                              onClick={() => handleEditClick(projectId, row.id)}
                             >
                               Edit
                             </Button>

@@ -13,7 +13,6 @@
 // import Button from '@mui/material/Button';
 // import { useNavigate } from 'react-router-dom';
 
-
 // const SAVE_INTERVAL_MS = 2000;
 // const TOOLBAR_OPTIONS = [
 //   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -288,7 +287,6 @@
 
 // export default TextEditor;
 
-
 // import React, { useEffect, useState } from 'react';
 // import ReactQuill from 'react-quill';
 // import 'react-quill/dist/quill.snow.css';
@@ -346,7 +344,6 @@
 
 // export default Editor;
 
-
 // import React, { useEffect, useState, useRef } from 'react';
 // import ReactQuill from 'react-quill';
 // import 'react-quill/dist/quill.snow.css';
@@ -363,7 +360,6 @@
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
 //   const [autosaveInterval, setAutosaveInterval] = useState(20000); // Autosave every 5 seconds
-
 
 //   useEffect(() => {
 //     const fetchContent = async () => {
@@ -394,7 +390,6 @@
 //         console.error('Error saving document (autosave):', err);
 //       }
 //     };
-
 
 //     // Set up autosave interval (clear previous interval if necessary)
 //     const intervalId = setInterval(autosave, autosaveInterval);
@@ -441,70 +436,104 @@
 
 // export default Editor;
 
-
-
-
-import React, { useEffect, useState, useRef } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import { Document, Page } from 'react-pdf';
-import { fetchDocumentUrl, updateDocumentContent } from '../utils/firestoreUtil';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import useDebounce from '../hooks/useDebounce'; // Import the custom hook
+import React, { useEffect, useState, useRef } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+// import { Document, Page } from 'react-pdf';
+import {
+  fetchDocumentUrl,
+  updateDocumentContent,
+  updateFileStatus,
+} from "../utils/firestoreUtil";
+// import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import useDebounce from "../hooks/useDebounce"; // Import the custom hook
+import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
+import {auth} from '../utils/firebase'
 
 const Editor = () => {
-  const projectId = 'wTSgFZVPvuFnGhyz1fZ6';
-  const fileId = 'gdYDnGzgzjBtE0r2ORCr';
+  // const projectId = "wTSgFZVPvuFnGhyz1fZ6";
+  // const fileId = "gdYDnGzgzjBtE0r2ORCr";
+  const { projectId, documentId } = useParams();
   const quillRef = useRef(null); // Reference to Quill editor instance
-  const [htmlContent, setHtmlContent] = useState('');
-  const [pdfUrl, setPdfUrl] = useState('');
+  const [htmlContent, setHtmlContent] = useState("");
+  const [pdfUrl, setPdfUrl] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
 
   const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
 
+  const [companyId, setCompanyId] = useState(null);
   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdTokenResult();
+        // console.log(token)
+        user.companyId = token.claims.companyId;
+        setUser(user);
+
+
+        setCompanyId(user.companyId);
+      }
+      else{
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    console.log("project Id : ", documentId, projectId)
     const fetchContent = async () => {
       try {
-        const { htmlUrl, pdfUrl } = await fetchDocumentUrl(projectId, fileId);
+        const { htmlUrl, pdfUrl } = await fetchDocumentUrl(projectId, documentId);
         const response = await fetch(htmlUrl);
         const text = await response.text();
         setHtmlContent(text);
         setPdfUrl(pdfUrl);
       } catch (err) {
-        setError('Error fetching document');
-        console.error('Error fetching document:', err);
+        setError("Error fetching document");
+        console.error("Error fetching document:", err);
       } finally {
         setLoading(false);
       }
     };
     fetchContent();
-  }, [projectId, fileId]);
+  }, [projectId, documentId]);
 
   useEffect(() => {
     const saveContent = async () => {
-      if (!debouncedHtmlContent) return; 
+      if (!debouncedHtmlContent) return;
 
       try {
-        const blob = new Blob([debouncedHtmlContent], { type: 'text/html' });
-        await updateDocumentContent(projectId, fileId, blob);
+        const blob = new Blob([debouncedHtmlContent], { type: "text/html" });
+        await updateDocumentContent(projectId, documentId, blob);
         // console.log('Document saved successfully (debounced save)');
       } catch (err) {
-        console.error('Error saving document (debounced save):', err);
+        console.error("Error saving document (debounced save):", err);
       }
     };
 
     saveContent();
-  }, [debouncedHtmlContent, projectId, fileId]);
+  }, [debouncedHtmlContent, projectId, documentId]);
 
   const handleSave = async () => {
     try {
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      await updateDocumentContent(projectId, fileId, blob);
-      alert('Document saved successfully');
+      if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+        await updateFileStatus(projectId, documentId, 4, user.uid);
+      }
+      else {
+        await updateFileStatus(projectId, documentId, 6, user.uid);
+      }
+      navigate('/mywork');
+      // navigate(/company/${companyId}/mywork);
+      console.log('Document status updated to 4 or 6');
+      // Optionally, you can add more logic here, such as navigating back or showing a success message.
     } catch (err) {
-      setError('Error saving document');
-      console.error('Error saving document:', err);
+      console.error('Error updating document status:', err);
     }
   };
 
@@ -517,8 +546,15 @@ const Editor = () => {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh' }}>
-      <div style={{ flex: 1, overflow: 'auto', padding: '10px', borderRight: '1px solid #ccc' }}>
+    <div style={{ display: "flex", height: "100vh" }}>
+      <div
+        style={{
+          flex: 1,
+          overflow: "auto",
+          padding: "10px",
+          borderRight: "1px solid #ccc",
+        }}
+      >
         {/* <Document file={pdfUrl} onLoadError={console.error}>
           <Page pageNumber={1} />
         </Document> */}
@@ -527,9 +563,28 @@ const Editor = () => {
           <iframe src={pdfUrl} width="100%" height="1000px" />
         </div>
       </div>
-      <div style={{ flex: 1, padding: '10px' }}>
-        <ReactQuill value={htmlContent} ref={quillRef} onChange={setHtmlContent} />
-        <button onClick={handleSave} style={{ marginTop: '10px' }}>Save</button>
+      <div style={{ flex: 1, padding: "10px" }}>
+        <ReactQuill
+          value={htmlContent}
+          ref={quillRef}
+          onChange={setHtmlContent}
+        />
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          color="success"
+          size="large"
+          sx={{
+            position: "fixed",
+            bottom: 25,
+            right: 16,
+            width: "100px",
+            height: "55px",
+            fontSize: "18px",
+          }}
+        >
+          Save
+        </Button>
       </div>
     </div>
   );

@@ -56,7 +56,7 @@ const App = () => {
           <Route path="/kyro/:companyId/*" element={<KyroInstance role={role}/>} />
           {/* <Route path="/superAdmin" element={<SuperAdminHome />} /> */}
           <Route path="/company/:companyId/*" element={<CompanyInstance role={role} />} />
-          <Route path='/editor/:documentId' element={<Editor />} />
+          <Route path='/editor/:projectId/:documentId' element={<Editor />} />
           <Route path="/myWork" element={<UserWork />} />
 
           {/* <Route path="/project/:projectId" element={<ProjectFiles />} /> */}

@@ -654,7 +654,6 @@ const columnsReadyForWork = [
 const columnsInProgress = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
-  { id: 'projectName', label: 'Project Name', minWidth: 150 },
   { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
   { id: 'assignedTo', label: 'Assigned To', minWidth: 150 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
@@ -794,6 +793,8 @@ const AdminDocs = () => {
     }
   };
 
+  
+
   if (isLoading) {
     return <CircularProgress />;
   }
@@ -832,6 +833,7 @@ const AdminDocs = () => {
           page={page}
           rowsPerPage={rowsPerPage}
           handleChangePage={handleChangePage}
+          projectId={projectId}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </TabPanel>
