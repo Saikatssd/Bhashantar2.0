@@ -1,45 +1,17 @@
-// import React from 'react';
-// import { useParams } from 'react-router-dom';
-// import Sidebar from './Sidebar';
-
-// const CompanyInstance = () => {
-//   const { id } = useParams();
-
-//   return (
-//     <div className="flex">
-//       <Sidebar companyId={id} />
-//       <div>
-
-//         Company Instance for {id}
-//       </div>
-//     </div>
-//   )
-// };
-
-// export default CompanyInstance;
-
-
-
-
 import React from 'react';
 import { useParams, Route, Routes } from 'react-router-dom';
-import Sidebar from './Sidebar';
-import AdminHome from '../pages/Admin/AdminHome';
-import UserHome from '../pages/Users/UserHome';
-// import SuperAdminHome from '../pages/SuperAdmin/SuperAdminHome';
+import Sidebar from './ClientCompany/Sidebar';
 import ProjectList from '../pages/ProjectList';
 import PermissionsManage from '../pages/PemissionManage';
 import RoleManage from '../pages/RoleManage';
-import UserWork from '../pages/Users/UserWorkspace'
 import UserManage from '../pages/UserManage';
-import ProjectFiles from './ProjectFiles';
-import KyroDocs from './Kyrotics/KyroUserFileAssign';
-import KyroProjects from './Kyrotics/ClientProjects';
-import AdminDocs from './Kyrotics/KyroAdminFileFlow';
-import UploadDocument from './UploadDocument';
-import AdminFileFlow from './AdminFileFlow';
+import UploadDocument from '../components/ClientCompany/UploadDocument';
+import AdminFileFlow from './ClientCompany/AdminFileFlow';
 import Profile from '../pages/Profile';
-import UserWorkspace from '../pages/Users/UserWorkspace';
+import UserFileFlow from './ClientCompany/UserFileFlow';
+import UserFileAssign from './ClientCompany/UserFileAssign';
+
+
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
 
@@ -49,13 +21,13 @@ const CompanyInstance = ({ role }) => {
       <div className="flex-grow">
         <Routes>
           <Route path="/profile" element={<Profile />} />
-          <Route path="/myWork" element={<UserWorkspace />} />
+          <Route path="/myWork" element={<UserFileFlow />} />
 
 
           <Route path="project" element={<ProjectList />} />
           {role === 'user' && (
             <>
-              <Route path="/project/:projectId" element={<ProjectFiles />} />
+              <Route path="/project/:projectId" element={<UserFileAssign />} />
             </>
           )}
 

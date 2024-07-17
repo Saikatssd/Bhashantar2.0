@@ -142,7 +142,7 @@ import { toast } from 'react-hot-toast';
 import axios from 'axios';
 import { server } from '../main';
 import { handleSendVerificationEmail, handleSignUp } from '../utils/auth';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/ClientCompany/Sidebar';
 
 const Register = () => {
   const [email, setEmail] = useState('');

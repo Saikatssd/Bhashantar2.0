@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Checkbox, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { server } from '../main'
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/ClientCompany/Sidebar';
 
 const RoleManager = () => {
   

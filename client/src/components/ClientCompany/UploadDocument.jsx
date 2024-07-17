@@ -4,13 +4,13 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { auth } from '../utils/firebase';
-import { uploadFile, fetchProjectFiles, deleteFile } from '../utils/firestoreUtil';
+import { useAuth } from '../../context/AuthContext';
+import { auth } from '../../utils/firebase';
+import { uploadFile, fetchProjectFiles, deleteFile } from '../../utils/firestoreUtil';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import { server } from '../main';
-import TableUpload from './Table/TableUpload';
+import { server } from '../../main';
+import TableUpload from '../Table/TableUpload';
 
 const UploadDocument = () => {
   const { companyId } = useParams();

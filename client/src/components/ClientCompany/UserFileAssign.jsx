@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { uploadFile, fetchProjectFiles, fetchProjectName, deleteFile } from '../utils/firestoreUtil';
+import { uploadFile, fetchProjectFiles, fetchProjectName, deleteFile } from '../../utils/firestoreUtil';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import { auth } from '../utils/firebase';
-import { useAuth } from '../context/AuthContext';
-import { updateFileStatus } from '../utils/firestoreUtil'
-import UserTable from '../components/Table/UserTable'
+import { auth } from '../../utils/firebase';
+import { useAuth } from '../../context/AuthContext';
+import { updateFileStatus } from '../../utils/firestoreUtil'
+import UserTable from '../Table/UserTable'
 
-const ProjectFiles = () => {
+const UserFileAssign = () => {
   const { projectId } = useParams();
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +24,6 @@ const ProjectFiles = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdTokenResult();
-        // console.log(token)
         user.roleName = token.claims.roleName;
         user.companyId = token.claims.companyId;
 
@@ -76,11 +75,6 @@ const ProjectFiles = () => {
 
   const handleFileAssign = async (id) => {
     try {
-      // if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
-      //   await updateFileStatus(projectId, id, 3, currentUser.uid);
-      // }
-      // else {
-      // }
       await updateFileStatus(projectId, id, 5, currentUser.uid);
       setFiles(files.filter(file => file.id !== id));
     } catch (err) {
@@ -138,4 +132,4 @@ const ProjectFiles = () => {
   );
 };
 
-export default ProjectFiles;
+export default UserFileAssign;

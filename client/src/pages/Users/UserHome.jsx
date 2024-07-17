@@ -1,7 +1,7 @@
 // src/pages/Users/UserHome.jsx
 
 import React from 'react';
-import Sidebar from '../../components/Sidebar';
+import Sidebar from '../../components/ClientCompany/Sidebar';
 
 const UserHome = ({ companyId }) => {
     return (

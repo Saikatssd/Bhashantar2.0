@@ -13,7 +13,7 @@ import Editor from './components/Editor'
 import DashboardWrapper from './components/DashboardWrapper';
 import UserHomeKyrotics from './pages/Users/KyroticsUserHome';
 import KyroInstance from './components/KyroInstance';
-import UserWorkspace from './pages/Users/UserWorkspace';
+import UserWorkspace from './components/ClientCompany/UserFileFlow';
 // import OfficeEditor from './components/OfficeEditor';
 
 const App = () => {

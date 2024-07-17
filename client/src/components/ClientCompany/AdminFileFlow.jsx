@@ -6,13 +6,13 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import TabPanel from './TabPanel.jsx';
-import { fetchProjectFiles, fetchProjectName, fetchUserNameById, updateFileStatus } from '../utils/firestoreUtil';
+import TabPanel from '../TabPanel.jsx';
+import { fetchProjectFiles, fetchProjectName, fetchUserNameById, updateFileStatus } from '../../utils/firestoreUtil.jsx';
 import { useParams } from 'react-router-dom';
-import UserSelectModal from './UserSelectModal';
-import { auth } from '../utils/firebase';
-import TableAdmin from './Table/TableAdmin';
-import Table from './Table/Table';
+import UserSelectModal from '../UserSelectModal.jsx';
+import { auth } from '../../utils/firebase.jsx';
+import TableAdmin from '../Table/TableAdmin.jsx';
+import Table from '../Table/Table.jsx';
 
 const columnsReadyForWork = [
     { id: 'slNo', label: 'Sl. No.', minWidth: 50 },

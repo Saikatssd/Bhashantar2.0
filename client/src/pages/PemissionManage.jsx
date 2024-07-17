@@ -308,7 +308,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Checkbox } from '@mui/material';
 import { CheckCircle, Cancel } from '@mui/icons-material';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../components/ClientCompany/Sidebar';
 
 
 const PermissionsManager = () => {

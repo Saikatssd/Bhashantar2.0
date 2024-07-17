@@ -4,10 +4,10 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import TabPanel from '../../components/TabPanel';
+import TabPanel from '../TabPanel';
 import { fetchProjectFiles, fetchProjects } from '../../utils/firestoreUtil';
 import { useAuth } from '../../context/AuthContext';
-import Table from '../../components/Table/Table';
+import Table from '../Table/Table';
 
 
 const columnsInProgress = [
@@ -25,7 +25,7 @@ const columnsCompleted = [
   { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
 ];
 
-const UserWorkspace = () => {
+const UserFileFlow = () => {
   const [tabValue, setTabValue] = useState(0);
   const [inProgressFiles, setInProgressFiles] = useState([]);
   const [completedFiles, setCompletedFiles] = useState([]);
@@ -143,4 +143,4 @@ const UserWorkspace = () => {
   );
 };
 
-export default UserWorkspace;
+export default UserFileFlow;

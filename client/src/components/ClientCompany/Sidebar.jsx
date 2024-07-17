@@ -226,7 +226,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { handleSignOut } from '../utils/auth';
+import { handleSignOut } from '../../utils/auth';
 
 export default function Sidebar({ companyId, role }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
