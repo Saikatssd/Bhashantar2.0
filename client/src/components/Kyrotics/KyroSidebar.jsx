@@ -62,8 +62,7 @@ export default function KyroSidebar({ companyId, role }) {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to='/mywork' className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700">
-                                        {/* <Link to={`/company/${companyId}/mywork`} className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700"> */}
+                                    <Link to={`/kyro/${companyId}/mywork`} className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700">
                                         My Work
                                     </Link>
                                 </li>

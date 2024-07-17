@@ -705,7 +705,7 @@ const Editor = () => {
       ["bold", "italic", "underline", "strike", "blockquote", "formula"],
       [{ size: [] }],
       [{ font: [] }],
-      [{ align: ["right", "center", "justify"] }],
+      [{ align: ["right", "center", "justify", "left"] }],
       [{ list: "ordered" }, { list: "bullet" }, { indent: '-1' }, { indent: '+1' }],
       [{ 'script': 'sub' }, { 'script': 'super' }],
       ["link", "image"],
@@ -842,7 +842,7 @@ const Editor = () => {
             fontSize: "18px",
           }}
         >
-          Save
+          Submit
         </Button>
       </div>
     </div>

@@ -39,6 +39,7 @@ import AdminDocs from './Kyrotics/KyroAdminFileFlow';
 import UploadDocument from './UploadDocument';
 import AdminFileFlow from './AdminFileFlow';
 import Profile from '../pages/Profile';
+import UserWorkspace from '../pages/Users/UserWorkspace';
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
 
@@ -48,6 +49,8 @@ const CompanyInstance = ({ role }) => {
       <div className="flex-grow">
         <Routes>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/myWork" element={<UserWorkspace />} />
+
 
           <Route path="project" element={<ProjectList />} />
           {role === 'user' && (

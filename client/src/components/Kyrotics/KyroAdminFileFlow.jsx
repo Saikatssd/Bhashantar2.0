@@ -105,13 +105,18 @@ const KyroAdminFileFlow = () => {
           }));
         };
 
-        const statusMapping = (companyId === 'cvy2lr5H0CUVH8o2vsVk')
-          ? { ready: 2, progress: 3, completed: 4 }
-          : { ready: 4, progress: 5, completed: 6 };
+        // const statusMapping = (companyId === 'cvy2lr5H0CUVH8o2vsVk')
+        //   ? { ready: 2, progress: 3, completed: 4 }
+        //   : { ready: 4, progress: 5, completed: 6 };
 
-        const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.ready));
-        const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.progress));
-        const completed = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.completed));
+        // const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.ready));
+        // const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.progress));
+        // const completed = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.completed));
+
+        const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 2));
+        const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 3));
+        const completed = await fetchFileUsers(projectFiles.filter(file => file.status >= 4));
+
 
         setReadyForWorkFiles(readyForWork.map((file, index) => ({ ...file, slNo: index + 1 })));
         setInProgressFiles(inProgress.map((file, index) => ({ ...file, slNo: index + 1 })));

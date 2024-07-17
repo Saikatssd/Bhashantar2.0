@@ -25,7 +25,7 @@ const columnsCompleted = [
   { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
 ];
 
-const UserWorkspace = () => {
+const KyroUserWorkspace = () => {
   const [tabValue, setTabValue] = useState(0);
   const [inProgressFiles, setInProgressFiles] = useState([]);
   const [completedFiles, setCompletedFiles] = useState([]);
@@ -55,10 +55,10 @@ const UserWorkspace = () => {
 
         projectsWithFiles.forEach((project) => {
           const projectInProgressFiles = project.files.filter(
-            (file) => file.status === 5 && file.assignedTo === currentUser.uid
+            (file) => file.status === 3 && file.assignedTo === currentUser.uid
           );
           const projectCompletedFiles = project.files.filter(
-            (file) => file.status === 6 && file.assignedTo === currentUser.uid
+            (file) => file.status === 4 && file.assignedTo === currentUser.uid
           );
 
           projectInProgressFiles.forEach((file) =>
@@ -143,4 +143,4 @@ const UserWorkspace = () => {
   );
 };
 
-export default UserWorkspace;
+export default KyroUserWorkspace;

@@ -98,14 +98,16 @@ const AdminFileFlow = () => {
                     }));
                 };
 
-                const statusMapping = (companyId === 'cvy2lr5H0CUVH8o2vsVk')
-                    ? { ready: 2, progress: 3, completed: 4 }
-                    : { ready: 4, progress: 5, completed: 6 };
+                // const statusMapping = (companyId === 'cvy2lr5H0CUVH8o2vsVk')
+                //     ? { ready: 2, progress: 3, completed: 4 }
+                //     : { ready: 4, progress: 5, completed: 6 };
 
-                const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.ready));
-                const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.progress));
-                const completed = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.completed));
-
+                // const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.ready));
+                // const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.progress));
+                // const completed = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.completed));
+                const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 4));
+                const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 5));
+                const completed = await fetchFileUsers(projectFiles.filter(file => file.status === 6));
                 const downloaded = await fetchFileUsers(projectFiles.filter(file => file.status === 7));
 
 
@@ -152,7 +154,7 @@ const AdminFileFlow = () => {
 
     const handleAssignToUser = async (userId) => {
         try {
-            await updateFileStatus(projectId, selectedFileId, 3, userId);
+            await updateFileStatus(projectId, selectedFileId, 5, userId);
             setReadyForWorkFiles(files.filter(file => file.id !== selectedFileId));
             handleCloseModal();
         } catch (err) {

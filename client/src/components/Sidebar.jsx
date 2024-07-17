@@ -306,8 +306,7 @@ export default function Sidebar({ companyId, role }) {
             </li>
             {role === 'user' && (
               <li>
-                <Link to='/mywork' className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700">
-                  {/* <Link to={`/company/${companyId}/mywork`} className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700"> */}
+                <Link to={`/company/${companyId}/mywork`} className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700">
                   My Work
                 </Link>
               </li>

@@ -10,6 +10,7 @@ import ClientCompanies from './Kyrotics/ClientCompanies';
 import ClientProjects from './Kyrotics/ClientProjects';
 import KyroAdminFileFlow from './Kyrotics/KyroAdminFileFlow';
 import KyroUserFileAssign from './Kyrotics/KyroUserFileAssign';
+import KyroUserWorkspace from './Kyrotics/KyroUserWorkspace';
 
 export default function KyroInstance({ role }) {
     const [userCompanyId, setUserCompanyId] = useState('');
@@ -38,6 +39,8 @@ export default function KyroInstance({ role }) {
                 <Routes>
                     <Route path="/profile" element={<Profile />} />
                     <Route path="project" element={<ClientProjects />} />
+                    <Route path="/myWork" element={<KyroUserWorkspace />} />
+
 
                     {role === 'user' && (
                         <>

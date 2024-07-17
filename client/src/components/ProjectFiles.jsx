@@ -76,12 +76,12 @@ const ProjectFiles = () => {
 
   const handleFileAssign = async (id) => {
     try {
-      if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
-        await updateFileStatus(projectId, id, 3, currentUser.uid);
-      }
-      else {
-        await updateFileStatus(projectId, id, 5, currentUser.uid);
-      }
+      // if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+      //   await updateFileStatus(projectId, id, 3, currentUser.uid);
+      // }
+      // else {
+      // }
+      await updateFileStatus(projectId, id, 5, currentUser.uid);
       setFiles(files.filter(file => file.id !== id));
     } catch (err) {
       console.error('Error updating file status:', err);
