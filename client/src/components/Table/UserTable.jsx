@@ -9,28 +9,20 @@ import TablePagination from '@mui/material/TablePagination';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import MuiTable from '@mui/material/Table';
-import { useNavigate } from 'react-router-dom';
 
-function Table2({
+function UserTable({
   columns,
   rows = [],
   page,
   rowsPerPage,
-  projectId,
   handleChangePage,
   handleChangeRowsPerPage,
+  handleEditClick,
+  projectName,
 }) {
-  const navigate = useNavigate();
-
-  const handleEditClick = (projectId, documentId) => {
-    // const documentId = `${projectId}_${fileId}`; // Concatenate projectId and fileId with an underscore
-    console.log('Navigating to editor with document ID:', projectId);
-    console.log('Navigating to editor with document ID:', documentId); // Debugging log
-    navigate(`/editor/${projectId}/${documentId}`);
-
-  };
   return (
     <div>
+      <h2 style={{ textAlign: 'center', padding: '16px', fontWeight: 'bold', fontSize: "24px" }}>{projectName}</h2>
       <Paper sx={{ width: '100%', overflow: 'hidden' }}>
         <TableContainer sx={{ maxHeight: 700 }}>
           <MuiTable stickyHeader aria-label="sticky table">
@@ -50,7 +42,7 @@ function Table2({
             <TableBody>
               {rows
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => (
+                .map((row, index) => (
                   <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                     {columns.map((column) => {
                       const value = row[column.id];
@@ -60,9 +52,9 @@ function Table2({
                             <Button
                               variant="contained"
                               color="primary"
-                              onClick={() => handleEditClick(projectId, row.id)}
+                              onClick={() => handleEditClick && handleEditClick(row.id, row.name)}
                             >
-                              Edit
+                              Assign
                             </Button>
                           ) : column.id === 'uploadedAt' && value ? (
                             new Date(value).toLocaleString()
@@ -91,7 +83,7 @@ function Table2({
   );
 }
 
-Table2.propTypes = {
+UserTable.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -105,10 +97,13 @@ Table2.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
   handleChangePage: PropTypes.func.isRequired,
   handleChangeRowsPerPage: PropTypes.func.isRequired,
+  handleEditClick: PropTypes.func,
+  projectName: PropTypes.string.isRequired,
 };
 
-Table2.defaultProps = {
+UserTable.defaultProps = {
   rows: [],
+  handleEditClick: null,
 };
 
-export default Table2;
+export default UserTable;

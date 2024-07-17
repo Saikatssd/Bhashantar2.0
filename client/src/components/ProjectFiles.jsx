@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import TableClient from './TableClient';
-// import TableAdmin from './TableUpload';
 import { uploadFile, fetchProjectFiles, fetchProjectName, deleteFile } from '../utils/firestoreUtil';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { auth } from '../utils/firebase';
 import { useAuth } from '../context/AuthContext';
-import { server } from '../main';
 import { updateFileStatus } from '../utils/firestoreUtil'
+import UserTable from '../components/Table/UserTable'
 
 const ProjectFiles = () => {
   const { projectId } = useParams();
@@ -38,24 +35,6 @@ const ProjectFiles = () => {
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged(async (user) => {
-  //     if (user) {
-  //       const token = await user.getIdTokenResult();
-  //       const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token.token}`,
-  //         },
-  //       });
-  //       console.log("company id", response.data.companyId);
-  //       console.log("role", response.data.roleName);
-  //       setCompanyId(response.data.companyId);
-  //       setRole(response.data.roleName);
-  //     }
-  //   });
-  //   return () => unsubscribe();
-  // }, []);
-
   useEffect(() => {
     if (companyId && role) {
       const getProjectData = async () => {
@@ -63,10 +42,7 @@ const ProjectFiles = () => {
         try {
           const projectFiles = await fetchProjectFiles(projectId);
           const projectName = await fetchProjectName(projectId);
-          const filteredFiles = projectFiles.filter(file =>
-            (file.status === 2 && companyId === 'cvy2lr5H0CUVH8o2vsVk' && role === 'user') ||
-            (file.status === 4 && companyId !== 'cvy2lr5H0CUVH8o2vsVk' && role === 'user') ||
-            (role === 'admin' && file.status === 0)
+          const filteredFiles = projectFiles.filter(file => (file.status === 4)
           );
           setFiles(filteredFiles);
           setProjectName(projectName);
@@ -96,18 +72,7 @@ const ProjectFiles = () => {
     }
   };
 
-  // const handleFileDelete = async (fileId, fileName) => {
-  //   try {
-  //     setIsLoading(true);
-  //     await deleteFile(projectId, fileId, fileName);
-  //     setFiles(files.filter(file => file.id !== fileId));
-  //     setIsLoading(false);
-  //   } catch (err) {
-  //     console.error('Error deleting file:', err);
-  //     setError(err);
-  //     setIsLoading(false);
-  //   }
-  // };
+
 
   const handleFileAssign = async (id) => {
     try {
@@ -155,7 +120,7 @@ const ProjectFiles = () => {
       {!isLoading && !error && files.length === 0 && <p>No files found.</p>}
       {!isLoading && !error && files.length > 0 && (
         <>
-          <TableClient
+          <UserTable
             columns={columns}
             rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
             page={page}
@@ -166,40 +131,9 @@ const ProjectFiles = () => {
             projectName={projectName}
           />
         </>
-        // role === 'admin' ? (
-        //   <TableAdmin
-        //     columns={columns}
-        //     rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
-        //     page={page}
-        //     rowsPerPage={rowsPerPage}
-        //     handleChangePage={handleChangePage}
-        //     handleChangeRowsPerPage={handleChangeRowsPerPage}
-        //     handleEditClick={handleFileDelete}
-        //     projectName={projectName}
-        //   />
-        // ) : (
-        //   <TableClient
-        //     columns={columns}
-        //     rows={files.map((file, index) => ({ ...file, slNo: index + 1 }))}
-        //     page={page}
-        //     rowsPerPage={rowsPerPage}
-        //     handleChangePage={handleChangePage}
-        //     handleChangeRowsPerPage={handleChangeRowsPerPage}
-        //     handleEditClick={handleFileAssign}
-        //     projectName={projectName}
-        //   />
-        // )
+
       )}
-      {/* {role === 'admin' && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => document.getElementById('file-upload').click()}
-          style={{ position: 'fixed', bottom: 16, right: 16 }}
-        >
-          Upload Files
-        </Button>
-      )} */}
+
     </div>
   );
 };

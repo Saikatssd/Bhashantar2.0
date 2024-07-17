@@ -1,28 +1,47 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Route, Routes } from 'react-router-dom';
-import Sidebar from './Sidebar';
-
+import { auth } from '../utils/firebase';
 import PermissionsManage from '../pages/PemissionManage';
 import RoleManage from '../pages/RoleManage';
-import UserWork from '../pages/Users/UserWork'
 import UserManage from '../pages/UserManage';
-import KyroDocs from './KyroDocs';
-import KyroProjects from './KyroProjects';
-import KyroSidebar from './KyroSidebar';
-import ClientProjects from './ClientProjects';
-import AdminDocs from './AdminDocs';
+import KyroSidebar from './Kyrotics/KyroSidebar';
+import Profile from '../pages/Profile';
+import ClientCompanies from './Kyrotics/ClientCompanies';
+import ClientProjects from './Kyrotics/ClientProjects';
+import KyroAdminFileFlow from './Kyrotics/KyroAdminFileFlow';
+import KyroUserFileAssign from './Kyrotics/KyroUserFileAssign';
 
 export default function KyroInstance({ role }) {
+    const [userCompanyId, setUserCompanyId] = useState('');
+
     const { companyId } = useParams();
+
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                const token = await user.getIdTokenResult();
+                // console.log(token)
+                user.roleName = token.claims.roleName;
+                user.companyId = token.claims.companyId;
+
+                // setRole(user.roleName);
+                setUserCompanyId(user.companyId);
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
     return (
         <div className="flex">
             <KyroSidebar companyId={companyId} role={role} />
             <div className="flex-grow">
                 <Routes>
-                    <Route path="project" element={<KyroProjects />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="project" element={<ClientProjects />} />
+
                     {role === 'user' && (
                         <>
-                            <Route path="project/:projectId" element={<KyroDocs />} />
+                            <Route path="project/:projectId" element={<KyroUserFileAssign />} />
                         </>
                     )}
 
@@ -30,11 +49,11 @@ export default function KyroInstance({ role }) {
                     {role !== 'user' && (
                         <>
 
-                            <Route path="project/:projectId" element={<AdminDocs />} />
-                            <Route path="clientProjects" element={<ClientProjects />} />
+                            <Route path="project/:projectId" element={<KyroAdminFileFlow />} />
+                            <Route path="clientProjects" element={<ClientCompanies />} />
                             <Route path="permissionManage" element={<PermissionsManage />} />
                             <Route path="roleManage" element={<RoleManage />} />
-                            <Route path="userManage" element={<UserManage companyId={companyId} />} />
+                            <Route path="userManage" element={<UserManage companyId={userCompanyId} />} />
                         </>
                     )}
                 </Routes>

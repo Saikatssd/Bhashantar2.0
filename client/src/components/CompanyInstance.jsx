@@ -30,13 +30,15 @@ import UserHome from '../pages/Users/UserHome';
 import ProjectList from '../pages/ProjectList';
 import PermissionsManage from '../pages/PemissionManage';
 import RoleManage from '../pages/RoleManage';
-import UserWork from '../pages/Users/UserWork'
+import UserWork from '../pages/Users/UserWorkspace'
 import UserManage from '../pages/UserManage';
 import ProjectFiles from './ProjectFiles';
-import KyroDocs from './KyroDocs';
-import KyroProjects from './KyroProjects';
-import AdminDocs from './AdminDocs';
+import KyroDocs from './Kyrotics/KyroUserFileAssign';
+import KyroProjects from './Kyrotics/ClientProjects';
+import AdminDocs from './Kyrotics/KyroAdminFileFlow';
 import UploadDocument from './UploadDocument';
+import AdminFileFlow from './AdminFileFlow';
+import Profile from '../pages/Profile';
 const CompanyInstance = ({ role }) => {
   const { companyId } = useParams();
 
@@ -45,10 +47,9 @@ const CompanyInstance = ({ role }) => {
       <Sidebar companyId={companyId} role={role} />
       <div className="flex-grow">
         <Routes>
+          <Route path="/profile" element={<Profile />} />
+
           <Route path="project" element={<ProjectList />} />
-          {/* <Route path="kyro/project" element={<KyroProjects />} /> */}
-          {/* <Route path="myWork" element={<UserWork />} /> */}
-          {/* <Route path="kyro/project/:projectId" element={<KyroDocs />} /> */}
           {role === 'user' && (
             <>
               <Route path="/project/:projectId" element={<ProjectFiles />} />
@@ -58,7 +59,8 @@ const CompanyInstance = ({ role }) => {
 
           {role !== 'user' && (
             <>
-              <Route path="project/:projectId" element={<AdminDocs />} />
+              {/* <Route path="project/:projectId" element={<AdminDocs />} /> */}
+              <Route path="project/:projectId" element={<AdminFileFlow />} />
               <Route path="uploadDocument" element={<UploadDocument />} />
               <Route path="permissionManage" element={<PermissionsManage />} />
               <Route path="roleManage" element={<RoleManage />} />

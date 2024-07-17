@@ -246,7 +246,7 @@ export default function Sidebar({ companyId, role }) {
               </Link>
             </li>
             <li>
-              <Link to='/profile' className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700">
+              <Link to={`/company/${companyId}/profile`} className="block rounded-lg px-4 py-2 text-sm font-medium text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700">
                 Profile
               </Link>
             </li>

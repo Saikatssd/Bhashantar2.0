@@ -10,7 +10,7 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import MuiTable from "@mui/material/Table";
 
-function KyroticsTableAdmin({
+function TableAdmin({
     columns,
     rows = [],
     page,
@@ -112,7 +112,7 @@ function KyroticsTableAdmin({
     );
 }
 
-KyroticsTableAdmin.propTypes = {
+TableAdmin.propTypes = {
     columns: PropTypes.arrayOf(
         PropTypes.shape({
             id: PropTypes.string.isRequired,
@@ -130,9 +130,9 @@ KyroticsTableAdmin.propTypes = {
     projectName: PropTypes.string.isRequired,
 };
 
-KyroticsTableAdmin.defaultProps = {
+TableAdmin.defaultProps = {
     rows: [],
     handleEditClick: null,
 };
 
-export default KyroticsTableAdmin;
+export default TableAdmin;

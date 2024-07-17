@@ -1,5 +1,5 @@
 import React from 'react'
-import KyroSidebar from '../../components/KyroSidebar'
+import KyroSidebar from '../../components/Kyrotics/KyroSidebar'
 
 export default function KyroticsAdminHome({companyId}) {
     return (

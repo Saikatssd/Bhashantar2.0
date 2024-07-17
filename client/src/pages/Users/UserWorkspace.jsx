@@ -4,10 +4,10 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import Table2 from '../../components/Table2';
 import TabPanel from '../../components/TabPanel';
 import { fetchProjectFiles, fetchProjects } from '../../utils/firestoreUtil';
 import { useAuth } from '../../context/AuthContext';
+import Table from '../../components/Table/Table';
 
 
 const columnsInProgress = [
@@ -25,7 +25,7 @@ const columnsCompleted = [
   { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
 ];
 
-const Workspace = () => {
+const UserWorkspace = () => {
   const [tabValue, setTabValue] = useState(0);
   const [inProgressFiles, setInProgressFiles] = useState([]);
   const [completedFiles, setCompletedFiles] = useState([]);
@@ -119,9 +119,8 @@ const Workspace = () => {
           <Tab label="Completed" />
         </Tabs>
       </Box>
-
       <TabPanel value={tabValue} index={0}>
-        <Table2
+        <Table
           columns={columnsInProgress}
           rows={inProgressFiles.map((file, index) => ({ ...file, slNo: index + 1 }))}
           page={page}
@@ -130,9 +129,8 @@ const Workspace = () => {
           handleChangeRowsPerPage={handleChangeRowsPerPage}
         />
       </TabPanel>
-
       <TabPanel value={tabValue} index={1}>
-        <Table2
+        <Table
           columns={columnsCompleted}
           rows={completedFiles.map((file, index) => ({ ...file, slNo: index + 1 }))}
           page={page}
@@ -145,4 +143,4 @@ const Workspace = () => {
   );
 };
 
-export default Workspace;
+export default UserWorkspace;

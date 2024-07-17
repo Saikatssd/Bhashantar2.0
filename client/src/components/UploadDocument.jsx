@@ -10,7 +10,7 @@ import { uploadFile, fetchProjectFiles, deleteFile } from '../utils/firestoreUti
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { server } from '../main';
-import TableUpload from './TableUpload';
+import TableUpload from './Table/TableUpload';
 
 const UploadDocument = () => {
   const { companyId } = useParams();
@@ -241,7 +241,7 @@ const UploadDocument = () => {
                         <div className="mt-2">
                           <input
                             type="text"
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm sm:leading-6 bg-gray-100 placeholder-gray-500 text-gray-900 focus:bg-white focus:opacity-100 opacity-50"
+                            className="block p-3 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm sm:leading-6 bg-gray-100 placeholder-gray-500 text-gray-900 focus:bg-white focus:opacity-100 opacity-50"
                             placeholder="New Project Name"
                             value={newProjectName}
                             onChange={(e) => setNewProjectName(e.target.value)}

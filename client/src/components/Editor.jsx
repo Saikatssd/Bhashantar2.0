@@ -436,24 +436,239 @@
 
 // export default Editor;
 
+// import React, { useEffect, useState, useRef } from "react";
+// import ReactQuill from "react-quill";
+// import "react-quill/dist/quill.snow.css";
+// // import { Document, Page } from 'react-pdf';
+// import {
+//   fetchDocumentUrl,
+//   updateDocumentContent,
+//   updateFileStatus,
+// } from "../utils/firestoreUtil";
+// // import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+// import useDebounce from "../hooks/useDebounce"; // Import the custom hook
+// import { useParams, useNavigate } from "react-router-dom";
+// import { Button } from "@mui/material";
+// import { auth } from '../utils/firebase'
+
+// const Editor = () => {
+//   // const projectId = "wTSgFZVPvuFnGhyz1fZ6";
+//   // const fileId = "gdYDnGzgzjBtE0r2ORCr";
+//   const { projectId, documentId } = useParams();
+//   const quillRef = useRef(null); // Reference to Quill editor instance
+//   const [htmlContent, setHtmlContent] = useState("");
+//   const [pdfUrl, setPdfUrl] = useState("");
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [user, setUser] = useState(null);
+//   const navigate = useNavigate();
+
+
+//   // const formats = [
+//   //   'font','size',
+//   //   'bold','italic','underline','strike',
+//   //   'color','background',
+//   //   'script',
+//   //   'header','blockquote','code-block',
+//   //   'indent','list',
+//   //   'direction','align',
+//   //   'link','image','video','formula',
+//   // ]
+//   const formats = [
+//     "header",
+//     "bold",
+//     "italic",
+//     "underline",
+//     "strike",
+//     "blockquote",
+//     "list",
+//     "bullet",
+//     "indent",
+//     "script",
+//     "link",
+//     "color",
+//     "image",
+//     "background",
+//     "align",
+//     "size",
+//     "font"
+//   ];
+
+
+//   const modules = {
+//     toolbar: [
+//       [{ header: [1, 2, 3, 4, 5, 6, false] }],
+//       ["bold", "italic", "underline", "strike", "blockquote", "formula"],
+//       [{ size: [] }],
+//       [{ font: [] }],
+//       [{ align: ["right", "center", "justify"] }],
+//       [{ list: "ordered" }, { list: "bullet" }, { indent: '-1' },
+//       { indent: '+1' }],
+//       [{ 'script': 'sub' }, { 'script': 'super' }],
+//       ["link", "image"],
+//       [{ color: [] }],
+//       [{ background: [] }],
+//       ['clean']
+//     ]
+//   };
+
+
+//   const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
+
+//   const [companyId, setCompanyId] = useState(null);
+//   useEffect(() => {
+//     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+//       if (user) {
+//         const token = await user.getIdTokenResult();
+//         // console.log(token)
+//         user.companyId = token.claims.companyId;
+//         setUser(user);
+
+
+//         setCompanyId(user.companyId);
+//       }
+//       else {
+//         setUser(null);
+//       }
+//     });
+//     return () => unsubscribe();
+//   }, []);
+
+//   useEffect(() => {
+//     console.log("Document Id & project Id : ", documentId, projectId)
+//     const fetchContent = async () => {
+//       try {
+//         const { htmlUrl, pdfUrl } = await fetchDocumentUrl(projectId, documentId);
+//         const response = await fetch(htmlUrl);
+//         const text = await response.text();
+//         setHtmlContent(text);
+//         setPdfUrl(pdfUrl);
+//       } catch (err) {
+//         setError("Error fetching document");
+//         console.error("Error fetching document:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchContent();
+//   }, [projectId, documentId]);
+
+//   useEffect(() => {
+//     const saveContent = async () => {
+//       if (!debouncedHtmlContent) return;
+
+//       try {
+//         const blob = new Blob([debouncedHtmlContent], { type: "text/html; charset=utf-8" });
+//         await updateDocumentContent(projectId, documentId, blob);
+//         // console.log('Document saved successfully (debounced save)');
+//       } catch (err) {
+//         console.error("Error saving document (debounced save):", err);
+//       }
+//     };
+
+//     saveContent();
+//   }, [debouncedHtmlContent, projectId, documentId]);
+
+//   const handleSave = async () => {
+//     try {
+//       if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
+//         await updateFileStatus(projectId, documentId, 4, user.uid);
+//       }
+//       else {
+//         await updateFileStatus(projectId, documentId, 6, user.uid);
+//       }
+//       navigate('/mywork');
+//       // navigate(/company/${companyId}/mywork);
+//       console.log('Document status updated to 4 or 6');
+//       // Optionally, you can add more logic here, such as navigating back or showing a success message.
+//     } catch (err) {
+//       console.error('Error updating document status:', err);
+//     }
+//   };
+
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
+
+//   if (error) {
+//     return <div>{error}</div>;
+//   }
+
+//   return (
+//     <div style={{ display: "flex", height: "100vh" }}>
+//       <div
+//         style={{
+//           flex: 1,
+//           overflow: "auto",
+//           padding: "10px",
+//           borderRight: "1px solid #ccc",
+//         }}
+//       >
+//         {/* <Document file={pdfUrl} onLoadError={console.error}>
+//           <Page pageNumber={1} />
+//         </Document> */}
+
+//         <div>
+//           <iframe src={pdfUrl} width="100%" height="1000px" />
+//         </div>
+//       </div>
+//       <div style={{ flex: 1, padding: "10px" }}>
+//         <ReactQuill
+//           // theme="snow"
+//           value={htmlContent}
+//           ref={quillRef}
+//           formats={formats}
+//           modules={modules}
+
+//           onChange={setHtmlContent}
+//         />
+//         <Button
+//           onClick={handleSave}
+//           variant="contained"
+//           color="success"
+//           size="large"
+//           sx={{
+//             position: "fixed",
+//             bottom: 25,
+//             right: 16,
+//             width: "100px",
+//             height: "55px",
+//             fontSize: "18px",
+//           }}
+//         >
+//           Save
+//         </Button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Editor;
+
+
+
+
 import React, { useEffect, useState, useRef } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-// import { Document, Page } from 'react-pdf';
+// import QuillBetterTable from 'quill-better-table';
+// import 'quill-better-table/dist/quill-better-table.css';
 import {
   fetchDocumentUrl,
   updateDocumentContent,
   updateFileStatus,
 } from "../utils/firestoreUtil";
-// import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import useDebounce from "../hooks/useDebounce"; // Import the custom hook
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { auth } from '../utils/firebase'
+import { auth } from '../utils/firebase';
+
+// Register quill-better-table module
+// Quill.register({
+//   'modules/better-table': QuillBetterTable
+// }, true);
 
 const Editor = () => {
-  // const projectId = "wTSgFZVPvuFnGhyz1fZ6";
-  // const fileId = "gdYDnGzgzjBtE0r2ORCr";
   const { projectId, documentId } = useParams();
   const quillRef = useRef(null); // Reference to Quill editor instance
   const [htmlContent, setHtmlContent] = useState("");
@@ -463,17 +678,6 @@ const Editor = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
-
-  // const formats = [
-  //   'font','size',
-  //   'bold','italic','underline','strike',
-  //   'color','background',
-  //   'script',
-  //   'header','blockquote','code-block',
-  //   'indent','list',
-  //   'direction','align',
-  //   'link','image','video','formula',
-  // ]
   const formats = [
     "header",
     "bold",
@@ -491,9 +695,9 @@ const Editor = () => {
     "background",
     "align",
     "size",
-    "font"
+    "font",
+    // "table" // Added 'table' format
   ];
-
 
   const modules = {
     toolbar: [
@@ -502,16 +706,29 @@ const Editor = () => {
       [{ size: [] }],
       [{ font: [] }],
       [{ align: ["right", "center", "justify"] }],
-      [{ list: "ordered" }, { list: "bullet" }, { indent: '-1' },
-      { indent: '+1' }],
+      [{ list: "ordered" }, { list: "bullet" }, { indent: '-1' }, { indent: '+1' }],
       [{ 'script': 'sub' }, { 'script': 'super' }],
       ["link", "image"],
       [{ color: [] }],
       [{ background: [] }],
-      ['clean']
-    ]
+      ['clean'],
+      // ['table'] // Added table button in the toolbar
+    ],
+    // 'better-table': {
+    //   operationMenu: {
+    //     items: {
+    //       unmergeCells: {
+    //         text: 'Unmerge cells'
+    //       }
+    //     }
+    //   },
+    //   table: {
+    //     defaultColumns: 3,
+    //     defaultRows: 3,
+    //     defaultCellWidth: 42
+    //   }
+    // }
   };
-
 
   const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
 
@@ -520,14 +737,10 @@ const Editor = () => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const token = await user.getIdTokenResult();
-        // console.log(token)
         user.companyId = token.claims.companyId;
         setUser(user);
-
-
         setCompanyId(user.companyId);
-      }
-      else {
+      } else {
         setUser(null);
       }
     });
@@ -535,7 +748,7 @@ const Editor = () => {
   }, []);
 
   useEffect(() => {
-    console.log("project Id : ", documentId, projectId)
+    console.log("Document Id & project Id : ", documentId, projectId)
     const fetchContent = async () => {
       try {
         const { htmlUrl, pdfUrl } = await fetchDocumentUrl(projectId, documentId);
@@ -558,7 +771,7 @@ const Editor = () => {
       if (!debouncedHtmlContent) return;
 
       try {
-        const blob = new Blob([debouncedHtmlContent], { type: "text/html" });
+        const blob = new Blob([debouncedHtmlContent], { type: "text/html; charset=utf-8" });
         await updateDocumentContent(projectId, documentId, blob);
         // console.log('Document saved successfully (debounced save)');
       } catch (err) {
@@ -578,7 +791,6 @@ const Editor = () => {
         await updateFileStatus(projectId, documentId, 6, user.uid);
       }
       navigate('/mywork');
-      // navigate(/company/${companyId}/mywork);
       console.log('Document status updated to 4 or 6');
       // Optionally, you can add more logic here, such as navigating back or showing a success message.
     } catch (err) {
@@ -604,22 +816,16 @@ const Editor = () => {
           borderRight: "1px solid #ccc",
         }}
       >
-        {/* <Document file={pdfUrl} onLoadError={console.error}>
-          <Page pageNumber={1} />
-        </Document> */}
-
         <div>
           <iframe src={pdfUrl} width="100%" height="1000px" />
         </div>
       </div>
       <div style={{ flex: 1, padding: "10px" }}>
         <ReactQuill
-          // theme="snow"
           value={htmlContent}
           ref={quillRef}
           formats={formats}
           modules={modules}
-
           onChange={setHtmlContent}
         />
         <Button

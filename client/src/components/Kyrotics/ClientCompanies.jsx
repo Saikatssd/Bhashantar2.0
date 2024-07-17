@@ -3,11 +3,11 @@ import axios from 'axios';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { server } from '../main';
+import { server } from '../../main';
 
 
-const ClientProjects = () => {
-    // const ClientProjects = ({ userCompanyId }) => {
+const ClientCompanies = () => {
+    // const ClientCompanies = ({ userCompanyId }) => {
     const userCompanyId = 'cvy2lr5H0CUVH8o2vsVk'
 
     const [companies, setCompanies] = useState([]);
@@ -66,4 +66,4 @@ const ClientProjects = () => {
     );
 };
 
-export default ClientProjects;
+export default ClientCompanies;

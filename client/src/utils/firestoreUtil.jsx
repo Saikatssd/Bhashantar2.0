@@ -1,7 +1,7 @@
 // //status notation
 // //0-->client End for delete //1-->Ml 
 // //(KyroticsSide) 2-->Ready-for-work//3-->Assigned to User//4-->completed
-// //(ClientSide)4-->Ready-for-work//5-->Assigned to User//6-->completed //7-->
+// //(ClientSide)4-->Ready-for-work//5-->Assigned to User//6-->completed //7-->Downloaded
 
 // import { db, storage } from './firebase';
 // import { collection, addDoc, getDocs, getDoc, doc, updateDoc, serverTimestamp, query, where, deleteDoc } from 'firebase/firestore';
@@ -18,7 +18,7 @@
 //     // Create an empty .rtf file
 //     const rtfFileName = file.name.replace('.pdf', '.rtf');
 //     const rtfBlob = new Blob([''], { type: 'application/rtf' });
-    
+
 //     // Upload the .rtf file
 //     const rtfStorageRef = ref(storage, `projects/${projectId}/${rtfFileName}`);
 //     const rtfSnapshot = await uploadBytes(rtfStorageRef, rtfBlob);
@@ -115,7 +115,7 @@
 //     throw new Error('Error fetching project name');
 //   }
 // };
- 
+
 
 // export const fetchDocumentUrl = async (projectId, fileId) => {
 //   try {
@@ -243,6 +243,7 @@ export const uploadFile = async (projectId, file) => {
       htmlUrl: htmlDownloadURL,
       uploadedAt: serverTimestamp(),
       status: 0,
+      projectId: projectId,
     });
 
     return {
@@ -295,8 +296,9 @@ export const fetchProjectFiles = async (projectId) => {
         name: data.name,
         pdfUrl: data.pdfUrl,
         htmlUrl: data.htmlUrl,
-        uploadedAt: data.uploadedAt ? data.uploadedAt.toDate() : null,
+        projectId: projectId,
         status: data.status,
+        uploadedAt: data.uploadedAt ? data.uploadedAt.toDate() : null,
         assignedTo: data.assignedTo || null // Ensure assignedTo field is included
       };
     });
@@ -424,7 +426,7 @@ export const updateDocumentContent = async (projectId, fileId, blob) => {
     const fileDoc = await getDoc(fileDocRef);
     const fileData = fileDoc.data();
     const htmlFileName = fileData.name.replace('.pdf', '.html');
-    
+
     // Create a storage reference for the HTML file
     const htmlStorageRef = ref(storage, `projects/${projectId}/${htmlFileName}`);
 

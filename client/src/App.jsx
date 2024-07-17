@@ -10,10 +10,10 @@ import { AuthProvider } from './context/AuthContext';
 import Profile from './pages/Profile';
 import CompanyInstance from './components/CompanyInstance';
 import Editor from './components/Editor'
-import UserWork from './pages/Users/UserWork'
 import DashboardWrapper from './components/DashboardWrapper';
 import UserHomeKyrotics from './pages/Users/KyroticsUserHome';
 import KyroInstance from './components/KyroInstance';
+import UserWorkspace from './pages/Users/UserWorkspace';
 // import OfficeEditor from './components/OfficeEditor';
 
 const App = () => {
@@ -52,12 +52,12 @@ const App = () => {
           {/* <Route path="/userKyro" element={<UserHomeKyrotics />} /> */}
           <Route path="/home" element={<DashboardWrapper />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/kyro/:companyId/*" element={<KyroInstance role={role}/>} />
+          {/* <Route path="/profile" element={<Profile />} /> */}
+          <Route path="/kyro/:companyId/*" element={<KyroInstance role={role} />} />
           {/* <Route path="/superAdmin" element={<SuperAdminHome />} /> */}
           <Route path="/company/:companyId/*" element={<CompanyInstance role={role} />} />
           <Route path='/editor/:projectId/:documentId' element={<Editor />} />
-          <Route path="/myWork" element={<UserWork />} />
+          <Route path="/myWork" element={<UserWorkspace />} />
 
           {/* <Route path="/project/:projectId" element={<ProjectFiles />} /> */}
           {/* <Route path="/dashboard" element={<PrivateRoute user={user}><Dashboard role={role} onLogout={handleLogout} /></PrivateRoute>} /> */}
