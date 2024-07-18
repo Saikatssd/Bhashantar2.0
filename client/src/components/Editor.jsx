@@ -662,6 +662,7 @@ import useDebounce from "../hooks/useDebounce"; // Import the custom hook
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { auth } from '../utils/firebase';
+import ConfirmationDialog from "./ConfirmationDialog";
 
 // Register quill-better-table module
 // Quill.register({
@@ -676,7 +677,16 @@ const Editor = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
 
   const formats = [
     "header",
@@ -732,6 +742,7 @@ const Editor = () => {
 
   const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
 
+  
   const [companyId, setCompanyId] = useState(null);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -829,7 +840,7 @@ const Editor = () => {
           onChange={setHtmlContent}
         />
         <Button
-          onClick={handleSave}
+          onClick={handleOpenDialog}
           variant="contained"
           color="success"
           size="large"
@@ -844,6 +855,13 @@ const Editor = () => {
         >
           Submit
         </Button>
+        <ConfirmationDialog
+        open={dialogOpen}
+        handleClose={handleCloseDialog}
+        handleConfirm={handleSave}
+        title="Confirm Submission"
+        message="Are you sure you want to submit ?"
+      />
       </div>
     </div>
   );

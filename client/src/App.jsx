@@ -14,6 +14,7 @@ import DashboardWrapper from './components/DashboardWrapper';
 import UserHomeKyrotics from './pages/Users/KyroticsUserHome';
 import KyroInstance from './components/KyroInstance';
 import UserWorkspace from './components/ClientCompany/UserFileFlow';
+import FileStatusManager from './components/FileStatusManager';
 // import OfficeEditor from './components/OfficeEditor';
 
 const App = () => {
@@ -48,6 +49,9 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
+
+        <Route path="/status" element={<FileStatusManager  />} />
+
           <Route path="/" element={<Login />} />
           {/* <Route path="/userKyro" element={<UserHomeKyrotics />} /> */}
           <Route path="/home" element={<DashboardWrapper />} />
