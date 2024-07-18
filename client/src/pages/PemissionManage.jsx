@@ -375,17 +375,17 @@ const PermissionsManager = () => {
   };
 
   return (
-    <div className='flex'>
+    <div className='flex p-6'>
       {/* <Sidebar/> */}
-    <div className="p-4 ">
+    <div className="p-4 w-full">
       <h1 className="text-2xl font-bold mb-4">Permissions Manager</h1>
-      <div className=''>
+      <div className='flex'>
         <div className="container">
 
-          <div className="mb-4">
+          <div className="mb-4 pr-4">
             <label className="block text-lg font-semibold mb-2">Select Role</label>
             <select
-              className="w-full p-2 border rounded"
+              className="p-2 w-1/2 border rounded"
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
             >
