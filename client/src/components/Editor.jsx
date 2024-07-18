@@ -256,6 +256,7 @@ const Editor = () => {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [isInitialContentSet, setIsInitialContentSet] = useState(false);
   const navigate = useNavigate();
 
   const handleOpenDialog = () => {
@@ -291,6 +292,7 @@ const Editor = () => {
         const text = await response.text();
         setHtmlContent(text);
         setPdfUrl(pdfUrl);
+        setIsInitialContentSet(true);
       } catch (err) {
         setError("Error fetching document");
         console.error("Error fetching document:", err);
@@ -373,34 +375,26 @@ const Editor = () => {
         </Button>
       </div>
       <div style={{ flex: 1, padding: "10px" }}>
-        <TinyMCEEditor
-          apiKey='ooi9c4kr5rwugnplqe0yys09hwfen6hn4nr7hokoxxintdfp'
-          onInit={(evt, editor) => editorRef.current = editor}
-          initialValue={htmlContent}
-          init={{
-            height: 'calc(100vh - 100px)',
-            menubar: false,
-            plugins: [
-              'advlist autolink lists link image charmap print preview anchor',
-              'searchreplace visualblocks code fullscreen',
-              'insertdatetime media table paste code help wordcount',
-              'table',
-              'image',
-              'imagetools',
-              'mathjax'
-            ],
-            toolbar: 'undo redo | formatselect | bold italic backcolor | \
-              alignleft aligncenter alignright alignjustify | \
-              bullist numlist outdent indent | removeformat | help | \
-              table | image | mathjax',
-            image_advtab: true,
-            automatic_uploads: true,
-            images_upload_url: 'your-upload-url', // URL to handle image uploads
-            file_picker_types: 'image',
-            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-          }}
-          onEditorChange={(content, editor) => setHtmlContent(content)}
-        />
+        {isInitialContentSet && (
+          <TinyMCEEditor
+            apiKey='ooi9c4kr5rwugnplqe0yys09hwfen6hn4nr7hokoxxintdfp'
+            value={htmlContent}
+            init={{
+              height: 'calc(100vh)',
+              plugins:
+                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+              toolbar:
+                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+              tinycomments_mode: "embedded",
+              tinycomments_author: "Author name",
+              mergetags_list: [
+                { value: "First.Name", title: "First Name" },
+                { value: "Email", title: "Email" }
+              ],
+            }}
+            onEditorChange={(content, editor) => setHtmlContent(content)}
+          />
+        )}
         <Button
           onClick={handleOpenDialog}
           variant="contained"
@@ -430,4 +424,5 @@ const Editor = () => {
 };
 
 export default Editor;
+
 
