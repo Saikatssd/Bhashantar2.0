@@ -663,6 +663,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { auth } from '../utils/firebase';
 import ConfirmationDialog from "./ConfirmationDialog";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 // Register quill-better-table module
 // Quill.register({
@@ -679,6 +681,7 @@ const Editor = () => {
   const [user, setUser] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+  
 
   const handleOpenDialog = () => {
     setDialogOpen(true);
@@ -808,6 +811,10 @@ const Editor = () => {
       console.error('Error updating document status:', err);
     }
   };
+  const handleBack = () => {
+    navigate(-1); // This will navigate to the previous page
+  };
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -830,6 +837,22 @@ const Editor = () => {
         <div>
           <iframe src={pdfUrl} width="100%" height="1000px" />
         </div>
+        <Button
+          onClick={handleBack}
+          variant="contained"
+          color="primary"
+          size="large"
+          sx={{
+            position: "fixed",
+            bottom: 25,
+            left: 16,
+            width: "100px",
+            height: "55px",
+            fontSize: "18px",
+          }}
+        ><ArrowBackIcon sx={{marginRight:"3px"}}/>
+          Back
+        </Button>
       </div>
       <div style={{ flex: 1, padding: "10px" }}>
         <ReactQuill

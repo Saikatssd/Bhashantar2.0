@@ -11,6 +11,8 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 import { server } from '../../main';
 import TableUpload from '../Table/TableUpload';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 const UploadDocument = () => {
   const { companyId } = useParams();
@@ -148,6 +150,10 @@ const UploadDocument = () => {
     setPage(0);
   };
 
+  const handleBack = () => {
+    navigate(-1); // This will navigate to the previous page
+  };
+
   return (
     <div className='flex flex-col items-center'>
       <div className="p-20 w-full">
@@ -207,6 +213,22 @@ const UploadDocument = () => {
                 projectName={selectedProject.name}
               />
             )}
+            <Button
+          onClick={handleBack}
+          variant="contained"
+          color="primary"
+          size="large"
+          sx={{
+            position: "fixed",
+            bottom: 25,
+            left: 16,
+            width: "100px",
+            height: "55px",
+            fontSize: "18px",
+          }}
+        ><ArrowBackIcon sx={{marginRight:"3px"}}/>
+          Back
+        </Button>
           </div>
         )}
         <Fab
