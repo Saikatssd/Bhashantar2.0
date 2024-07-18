@@ -323,7 +323,10 @@ const Editor = () => {
       } else {
         await updateFileStatus(projectId, documentId, 6, user.uid);
       }
-      navigate('/mywork');
+      // navigate('/mywork');
+      navigate(-1);
+      console.log('Document status updated to 4 or 6');
+      // Optionally, you can add more logic here, such as navigating back or showing a success message.
     } catch (err) {
       console.error('Error updating document status:', err);
     }

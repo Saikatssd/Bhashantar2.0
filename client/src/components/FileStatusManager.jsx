@@ -1,441 +1,14 @@
 // // src/components/FileStatusManager.js
 
-// import React, { useState, useEffect } from 'react';
-// import {
-//     fetchProjectFiles,
-//     fetchAllCompanies,
-//     fetchCompanyProjects,
-//     fetchProjects,
-//     updateFileStatus,
-// } from '../utils/firestoreUtil';
-// import {
-//     Card,
-//     CardContent,
-//     CardActions,
-//     Button,
-//     Select,
-//     MenuItem,
-//     FormControl,
-//     InputLabel,
-//     List,
-//     ListItem,
-//     ListItemText,
-// } from '@mui/material';
-
-
-// const statusLabels = {
-//     0: 'Delete Upload files(Client)-0',
-//     1: 'ML Processing - 1',
-//     2: 'Ready-for-work - 2',
-//     3: 'InProgress - 3',
-//     4: 'Ready-for-work (Client) - 4',
-//     5: 'InProgress (Client) - 5',
-//     6: 'Completed (Client) - 6',
-//     7: 'Downloaded - 7',
-// };
-
-// const FileStatusManager = () => {
-//     const [companies, setCompanies] = useState([]);
-//     const [projects, setProjects] = useState([]);
-//     const [files, setFiles] = useState([]);
-//     const [filterCompany, setFilterCompany] = useState('');
-//     const [filterProject, setFilterProject] = useState('');
-//     const [filterStatus, setFilterStatus] = useState('');
-//     const [filteredFiles, setFilteredFiles] = useState([]);
-
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             try {
-//                 const companies = await fetchAllCompanies();
-//                 setCompanies(companies);
-//             } catch (error) {
-//                 console.error('Error fetching companies:', error);
-//             }
-//         };
-
-//         fetchData();
-//     }, []);
-
-//     useEffect(() => {
-//         const fetchProjectsAndFiles = async () => {
-//             try {
-//                 let companyProjects = [];
-//                 if (filterCompany) {
-//                     companyProjects = await fetchCompanyProjects(filterCompany);
-//                 } else {
-//                     companyProjects = await fetchProjects();
-//                 }
-//                 setProjects(companyProjects);
-//                 const projectFiles = [];
-//                 for (const project of companyProjects) {
-//                     const files = await fetchProjectFiles(project.id);
-//                     projectFiles.push(...files);
-//                 }
-//                 setFiles(projectFiles);
-//                 setFilteredFiles(projectFiles);
-//             } catch (error) {
-//                 console.error('Error fetching projects or files:', error);
-//             }
-//         };
-
-//         fetchProjectsAndFiles();
-//     }, [filterCompany]);
-
-//     useEffect(() => {
-//         setFilteredFiles(
-//             files.filter(
-//                 (file) =>
-//                     (filterProject ? file.projectId === filterProject : true) &&
-//                     (filterStatus ? file.status === Number(filterStatus) : true)
-//             )
-//         );
-//     }, [filterProject, filterStatus, files]);
-
-//     const handleStatusChange = async (fileId, newStatus) => {
-//         try {
-//             await updateFileStatus(filterProject, fileId, newStatus, 'userId');
-//             const updatedFiles = files.map((file) =>
-//                 file.id === fileId ? { ...file, status: newStatus } : file
-//             );
-//             setFiles(updatedFiles);
-//             setFilteredFiles(
-//                 updatedFiles.filter(
-//                     (file) =>
-//                         (filterProject ? file.projectId === filterProject : true) &&
-//                         (filterStatus ? file.status === Number(filterStatus) : true)
-//                 )
-//             );
-//         } catch (error) {
-//             console.error('Error updating file status:', error);
-//         }
-//     };
-
-//     return (
-//         <div className="container mx-auto p-4">
-//             <h1 className="text-2xl font-bold mb-4">File Status Manager</h1>
-
-//             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-//                 <FormControl fullWidth>
-//                     <InputLabel>Company</InputLabel>
-//                     <Select
-//                         value={filterCompany}
-//                         onChange={(e) => {
-//                             setFilterCompany(e.target.value);
-//                             setFilterProject('');
-//                         }}
-//                     >
-//                         <MenuItem value="">All Companies</MenuItem>
-//                         {companies.map((company) => (
-//                             <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
-//                         ))}
-//                     </Select>
-//                 </FormControl>
-
-//                 <FormControl fullWidth>
-//                     <InputLabel>Project</InputLabel>
-//                     <Select
-//                         value={filterProject}
-//                         onChange={(e) => setFilterProject(e.target.value)}
-//                         disabled={!filterCompany && companies.length > 0}
-//                     >
-//                         <MenuItem value="">All Projects</MenuItem>
-//                         {projects.map((project) => (
-//                             <MenuItem key={project.id} value={project.id}>{project.name}</MenuItem>
-//                         ))}
-//                     </Select>
-//                 </FormControl>
-
-//                 <FormControl fullWidth>
-//                     <InputLabel>Status</InputLabel>
-//                     <Select
-//                         value={filterStatus}
-//                         onChange={(e) => setFilterStatus(e.target.value)}
-//                     >
-
-//                         <MenuItem value="">All Statuses</MenuItem>
-//                         {Object.entries(statusLabels).map(([value, label]) => (
-//                             <MenuItem key={value} value={value}>{label}</MenuItem>
-//                         ))}
-
-//                     </Select>
-//                 </FormControl>
-//             </div>
-//             <List>
-//                 {filteredFiles.length > 0 ? (
-//                     filteredFiles.map((file) => (
-//                         <ListItem key={file.id} className="bg-white shadow-md rounded mb-2 p-2">
-//                             <ListItemText
-//                                 primary={file.name}
-//                                 secondary={`Status: ${file.status}`}
-//                             />
-//                             <div className="flex space-x-2">
-//                                 {Object.keys(statusLabels).map((status) => (
-//                                     <Button
-//                                         key={status}
-//                                         variant={file.status === Number(status) ? "contained" : "outlined"}
-//                                         onClick={() => handleStatusChange(file.id, status)}
-//                                     >
-//                                         {status}
-//                                     </Button>
-//                                 ))}
-//                             </div>
-//                         </ListItem>
-//                     ))
-//                 ) : (
-//                     <ListItem>
-//                         <ListItemText primary="No files found for the selected filters." />
-//                     </ListItem>
-//                 )}
-//             </List>
-//         </div>
-//     );
-// };
-
-// export default FileStatusManager;
-
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import {
-//   fetchProjectFiles,
-//   fetchAllCompanies,
-//   fetchCompanyProjects,
-//   fetchProjects,
-//   updateFileStatus,
-// } from '../utils/firestoreUtil';
-// import {
-//   Card,
-//   CardContent,
-//   CardActions,
-//   Button,
-//   Select,
-//   MenuItem,
-//   FormControl,
-//   InputLabel,
-//   List,
-//   ListItem,
-//   ListItemText,
-// } from '@mui/material';
-
-
-// const statusLabels = {
-//     0: 'Delete Upload files(Client)-0',
-//     1: 'ML Processing - 1',
-//     2: 'Ready-for-work - 2',
-//     3: 'InProgress - 3',
-//     4: 'Ready-for-work (Client) - 4',
-//     5: 'InProgress (Client) - 5',
-//     6: 'Completed (Client) - 6',
-//     7: 'Downloaded - 7',
-// };
-// const FileStatusManager = () => {
-//   const [companies, setCompanies] = useState([]);
-//   const [projects, setProjects] = useState([]);
-//   const [files, setFiles] = useState([]);
-//   const [filterCompany, setFilterCompany] = useState('');
-//   const [filterProject, setFilterProject] = useState('');
-//   const [filterStatus, setFilterStatus] = useState('');
-//   const [filteredFiles, setFilteredFiles] = useState([]);
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const companies = await fetchAllCompanies();
-//         setCompanies(companies);
-//       } catch (error) {
-//         console.error('Error fetching companies:', error);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-//   useEffect(() => {
-//     const fetchProjectsAndFiles = async () => {
-//       try {
-//         let companyProjects = [];
-//         if (filterCompany) {
-//           companyProjects = await fetchCompanyProjects(filterCompany);
-//         } else {
-//           companyProjects = await fetchProjects();
-//         }
-//         setProjects(companyProjects);
-//         const projectFiles = [];
-//         for (const project of companyProjects) {
-//           const files = await fetchProjectFiles(project.id);
-//           projectFiles.push(...files);
-//         }
-//         setFiles(projectFiles);
-//         setFilteredFiles(projectFiles);
-//       } catch (error) {
-//         console.error('Error fetching projects or files:', error);
-//       }
-//     };
-
-//     fetchProjectsAndFiles();
-//   }, [filterCompany]);
-
-//   useEffect(() => {
-//     setFilteredFiles(
-//       files.filter(
-//         (file) =>
-//           (filterProject ? file.projectId === filterProject : true) &&
-//           (filterStatus ? file.status === Number(filterStatus) : true)
-//       )
-//     );
-//   }, [filterProject, filterStatus, files]);
-
-//   const handleStatusChange = async (fileId, newStatus) => {
-//     try {
-//       await updateFileStatus(filterProject, fileId, newStatus, 'userId');
-//       const updatedFiles = files.map((file) =>
-//         file.id === fileId ? { ...file, status: newStatus } : file
-//       );
-//       setFiles(updatedFiles);
-//       setFilteredFiles(
-//         updatedFiles.filter(
-//           (file) =>
-//             (filterProject ? file.projectId === filterProject : true) &&
-//             (filterStatus ? file.status === Number(filterStatus) : true)
-//         )
-//       );
-//     } catch (error) {
-//       console.error('Error updating file status:', error);
-//     }
-//   };
-
-//   const handleBulkStatusChange = async (newStatus) => {
-//     try {
-//       const filteredFileIds = filteredFiles.map(file => file.id);
-//       for (const fileId of filteredFileIds) {
-//         await updateFileStatus(filterProject, fileId, newStatus, 'userId');
-//       }
-//       const updatedFiles = files.map((file) =>
-//         filteredFileIds.includes(file.id) ? { ...file, status: newStatus } : file
-//       );
-//       setFiles(updatedFiles);
-//       setFilteredFiles(
-//         updatedFiles.filter(
-//           (file) =>
-//             (filterProject ? file.projectId === filterProject : true) &&
-//             (filterStatus ? file.status === Number(filterStatus) : true)
-//         )
-//       );
-//     } catch (error) {
-//       console.error('Error updating file statuses:', error);
-//     }
-//   };
-
-//   return (
-//     <div className="container mx-auto p-4">
-//       <h1 className="text-2xl font-bold mb-4">File Status Manager</h1>
-      
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-//         <FormControl fullWidth>
-//           <InputLabel>Company</InputLabel>
-//           <Select
-//             value={filterCompany}
-//             onChange={(e) => {
-//               setFilterCompany(e.target.value);
-//               setFilterProject('');
-//             }}
-//           >
-//             <MenuItem value="">All Companies</MenuItem>
-//             {companies.map((company) => (
-//               <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
-//             ))}
-//           </Select>
-//         </FormControl>
-
-//         <FormControl fullWidth>
-//           <InputLabel>Project</InputLabel>
-//           <Select
-//             value={filterProject}
-//             onChange={(e) => setFilterProject(e.target.value)}
-//             disabled={!filterCompany && companies.length > 0}
-//           >
-//             <MenuItem value="">All Projects</MenuItem>
-//             {projects.map((project) => (
-//               <MenuItem key={project.id} value={project.id}>{project.name}</MenuItem>
-//             ))}
-//           </Select>
-//         </FormControl>
-
-//         <FormControl fullWidth>
-//           <InputLabel>Status</InputLabel>
-//           <Select
-//             value={filterStatus}
-//             onChange={(e) => setFilterStatus(e.target.value)}
-//           >
-//             <MenuItem value="">All Statuses</MenuItem>
-//             {Object.keys(statusLabels).map((status) => (
-//               <MenuItem key={status} value={status}>{status}</MenuItem>
-//             ))}
-//           </Select>
-//         </FormControl>
-//       </div>
-
-//       <div className="mb-4">
-//         <Button
-//           variant="contained"
-//           color="primary"
-//           onClick={() => handleBulkStatusChange(2)} // Example status change
-//         >
-//           Update Status for Filtered Files
-//         </Button>
-//       </div>
-
-//       <List>
-//         {filteredFiles.length > 0 ? (
-//           filteredFiles.map((file) => {
-//             const project = projects.find(p => p.id === file.projectId);
-//             return (
-//               <ListItem key={file.id} className="bg-white shadow-md rounded mb-2 p-2">
-//                 <ListItemText
-//                   primary={file.name}
-//                   secondary={`Status: ${file.status}, Project: ${project ? project.name : 'Unknown'}`}
-//                 />
-//                 <div className="flex space-x-2">
-//                   {Object.keys(statusLabels).map((status) => (
-//                     <Button
-//                       key={status}
-//                       variant={file.status === Number(status) ? "contained" : "outlined"}
-//                       onClick={() => handleStatusChange(file.id, status)}
-//                     >
-//                       {status}
-//                     </Button>
-//                   ))}
-//                 </div>
-//               </ListItem>
-//             );
-//           })
-//         ) : (
-//           <ListItem>
-//             <ListItemText primary="No files found for the selected filters." />
-//           </ListItem>
-//         )}
-//       </List>
-//     </div>
-//   );
-// };
-
-// export default FileStatusManager;
-
-
-
 import React, { useState, useEffect } from 'react';
 import {
   fetchProjectFiles,
   fetchAllCompanies,
   fetchCompanyProjects,
   fetchProjects,
-  updateFileStatus,
+  updateFileStatusNumber,
 } from '../utils/firestoreUtil';
 import {
-  Card,
-  CardContent,
-  CardActions,
   Button,
   Select,
   MenuItem,
@@ -452,16 +25,15 @@ import {
   DialogTitle,
 } from '@mui/material';
 
-
 const statusLabels = {
-    0: 'Delete Upload files(Client)-0',
-    1: 'ML Processing - 1',
-    2: 'Ready-for-work - 2',
-    3: 'InProgress - 3',
-    4: 'Ready-for-work (Client) - 4',
-    5: 'InProgress (Client) - 5',
-    6: 'Completed (Client) - 6',
-    7: 'Downloaded - 7',
+  0: 'Delete Upload files(Client)-0',
+  1: 'ML Processing - 1',
+  2: 'Ready-for-work - 2',
+  3: 'InProgress - 3',
+  4: 'Ready-for-work (Client) - 4',
+  5: 'InProgress (Client) - 5',
+  6: 'Completed (Client) - 6',
+  7: 'Downloaded - 7',
 };
 
 const FileStatusManager = () => {
@@ -499,11 +71,11 @@ const FileStatusManager = () => {
           companyProjects = await fetchProjects();
         }
         setProjects(companyProjects);
-        const projectFiles = [];
-        for (const project of companyProjects) {
-          const files = await fetchProjectFiles(project.id);
-          projectFiles.push(...files);
-        }
+
+        const projectFilesPromises = companyProjects.map((project) =>
+          fetchProjectFiles(project.id)
+        );
+        const projectFiles = (await Promise.all(projectFilesPromises)).flat();
         setFiles(projectFiles);
         setFilteredFiles(projectFiles);
       } catch (error) {
@@ -526,7 +98,7 @@ const FileStatusManager = () => {
 
   const handleStatusChange = async (fileId, newStatus) => {
     try {
-      await updateFileStatus(filterProject, fileId, newStatus, 'userId');
+      await updateFileStatusNumber(filterProject, fileId, newStatus );
       const updatedFiles = files.map((file) =>
         file.id === fileId ? { ...file, status: newStatus } : file
       );
@@ -546,10 +118,10 @@ const FileStatusManager = () => {
   const handleBulkStatusChange = async () => {
     try {
       for (const fileId of selectedFiles) {
-        await updateFileStatus(filterProject, fileId, newStatus, 'userId');
+        await updateFileStatusNumber(filterProject, fileId, newStatus);
       }
       const updatedFiles = files.map((file) =>
-        selectedFiles.includes(file.id) ? { ...file, status: newStatus } : file
+        selectedFiles.includes(file.id) ? { ...file, status: Number(newStatus) } : file
       );
       setFiles(updatedFiles);
       setFilteredFiles(
@@ -568,7 +140,7 @@ const FileStatusManager = () => {
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedFiles(filteredFiles.map(file => file.id));
+      setSelectedFiles(filteredFiles.map((file) => file.id));
     } else {
       setSelectedFiles([]);
     }
@@ -585,7 +157,7 @@ const FileStatusManager = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">File Status Manager</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <FormControl fullWidth>
           <InputLabel>Company</InputLabel>
@@ -598,7 +170,9 @@ const FileStatusManager = () => {
           >
             <MenuItem value="">All Companies</MenuItem>
             {companies.map((company) => (
-              <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
+              <MenuItem key={company.id} value={company.id}>
+                {company.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -612,7 +186,9 @@ const FileStatusManager = () => {
           >
             <MenuItem value="">All Projects</MenuItem>
             {projects.map((project) => (
-              <MenuItem key={project.id} value={project.id}>{project.name}</MenuItem>
+              <MenuItem key={project.id} value={project.id}>
+                {project.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -625,7 +201,9 @@ const FileStatusManager = () => {
           >
             <MenuItem value="">All Statuses</MenuItem>
             {Object.entries(statusLabels).map(([value, label]) => (
-              <MenuItem key={value} value={value}>{label}</MenuItem>
+              <MenuItem key={value} value={value}>
+                {label}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -652,23 +230,30 @@ const FileStatusManager = () => {
         </ListItem>
         {filteredFiles.length > 0 ? (
           filteredFiles.map((file) => {
-            const project = projects.find(p => p.id === file.projectId);
+            const project = projects.find((p) => p.id === file.projectId);
             return (
-              <ListItem key={file.id} className="bg-white shadow-md rounded mb-2 p-2">
+              <ListItem
+                key={file.id}
+                className="bg-white shadow-md rounded mb-2 p-2"
+              >
                 <Checkbox
                   checked={selectedFiles.includes(file.id)}
                   onChange={() => handleFileSelect(file.id)}
                 />
                 <ListItemText
                   primary={file.name}
-                  secondary={`Status: ${file.status}, Project: ${project ? project.name : 'Unknown'}`}
+                  secondary={`Status: ${
+                    file.status
+                  }, Project: ${project ? project.name : 'Unknown'}`}
                 />
                 <div className="flex space-x-2">
                   {Object.keys(statusLabels).map((status) => (
                     <Button
                       key={status}
-                      variant={file.status === Number(status) ? "contained" : "outlined"}
-                      onClick={() => handleStatusChange(file.id, status)}
+                      variant={
+                        file.status === Number(status) ? 'contained' : 'outlined'
+                      }
+                      onClick={() => handleStatusChange(file.id, Number(status))}
                     >
                       {status}
                     </Button>
@@ -687,17 +272,19 @@ const FileStatusManager = () => {
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>Update Status</DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText className="pb-3">
             Select the new status for the selected files.
           </DialogContentText>
           <FormControl fullWidth>
             <InputLabel>New Status</InputLabel>
             <Select
               value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value)}
+              onChange={(e) => setNewStatus(Number(e.target.value))}
             >
               {Object.entries(statusLabels).map(([value, label]) => (
-                <MenuItem key={value} value={value}>{label}</MenuItem>
+                <MenuItem key={value} value={value}>
+                  {value}
+                </MenuItem>
               ))}
             </Select>
           </FormControl>

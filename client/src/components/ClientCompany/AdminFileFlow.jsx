@@ -7,12 +7,13 @@ import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import TabPanel from '../TabPanel.jsx';
-import { fetchProjectFiles, fetchProjectName, fetchUserNameById, updateFileStatus } from '../../utils/firestoreUtil.jsx';
+import { fetchProjectFiles, fetchProjectName, fetchUserNameById, updateFileStatus, exportFiles } from '../../utils/firestoreUtil.jsx';
 import { useParams } from 'react-router-dom';
 import UserSelectModal from '../UserSelectModal.jsx';
 import { auth } from '../../utils/firebase.jsx';
 import TableAdmin from '../Table/TableAdmin.jsx';
 import Table from '../Table/Table.jsx';
+import CompletedTable from '../Table/CompletedTable.jsx';
 
 const columnsReadyForWork = [
     { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
@@ -34,6 +35,8 @@ const columnsCompleted = [
     { id: 'name', label: 'File Name', minWidth: 100 },
     { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
     { id: 'completedBy', label: 'Completed By', minWidth: 150 },
+    { id: 'download', label: '', minWidth: 100, align: 'right' },
+
 ];
 
 const columnsDownloaded = [
@@ -163,7 +166,23 @@ const AdminFileFlow = () => {
         }
     };
 
+    // const handleDownload = async (fileId, fileName, format) => {
+    //     try {
+    //         await exportFiles(projectId, fileId, fileName, format);
+    //     } catch (error) {
+    //         console.error('Error exporting files:', error);
+    //     }
+    // };
 
+    const handleDownload = async (fileId,fileName, format) => {
+        try {
+            const file = files.find(file => file.id === fileId);
+            await exportFiles(projectId, fileId, fileName, format);
+        } catch (err) {
+            console.error('Error downloading file:', err);
+            setError(err);
+        }
+    };
 
     if (isLoading) {
         return <CircularProgress />;
@@ -209,13 +228,14 @@ const AdminFileFlow = () => {
             </TabPanel>
 
             <TabPanel value={tabValue} index={2}>
-                <Table
+                <CompletedTable
                     columns={columnsCompleted}
                     rows={completedFiles}
                     page={page}
                     rowsPerPage={rowsPerPage}
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
+                    handleEditClick={handleDownload}
                 />
             </TabPanel>
 
