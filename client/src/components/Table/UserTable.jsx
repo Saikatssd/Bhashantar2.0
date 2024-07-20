@@ -10,6 +10,13 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import MuiTable from '@mui/material/Table';
 
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  return !isNaN(date.getTime()) ? date.toLocaleDateString() : 'Invalid Date';
+};
+
 function UserTable({
   columns,
   rows = [],
@@ -48,7 +55,7 @@ function UserTable({
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align || 'left'}>
-                          {column.id === 'edit' ? (
+                          {column.id === 'assign' ? (
                             <Button
                               variant="contained"
                               color="primary"
@@ -56,11 +63,11 @@ function UserTable({
                             >
                               Assign
                             </Button>
-                          ) : column.id === 'uploadedAt' && value ? (
-                            new Date(value).toLocaleString()
-                          ) : (
+                           ) : column.id.endsWith('Date') && value ? (
+                            formatDate(value)
+                        ) : (
                             value
-                          )}
+                        )}
                         </TableCell>
                       );
                     })}

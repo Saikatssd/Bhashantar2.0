@@ -22,7 +22,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import { getAuth, setPersistence, browserSessionPersistence, onAuthStateChanged } from "firebase/auth";
 import { getFunctions } from "firebase/functions";
 import { getFirestore } from "firebase/firestore"; 
 import { getStorage } from 'firebase/storage';
@@ -46,5 +46,16 @@ const analytics = getAnalytics(app);
 const functions = getFunctions(app);
 const db = getFirestore(app); 
 const storage = getStorage(app);
+
+
+
+// Set persistence to session only
+setPersistence(auth, browserSessionPersistence)
+  .then(() => {
+    console.log("Session persistence set successfully");
+  })
+  .catch((error) => {
+    console.error("Error setting session persistence:", error);
+  });
 
 export { app, auth, functions, db, storage };

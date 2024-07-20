@@ -20,6 +20,14 @@ const UserFileAssign = () => {
   const [role, setRole] = useState('');
   const { currentUser } = useAuth();
 
+  const columns = [
+    { id: 'slNo', label: 'Sl. No', minWidth: 50 },
+    { id: 'name', label: 'File Name', minWidth: 170 },
+    { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+    { id: 'kyro_completedDate', label: 'Uploaded At', minWidth: 170 },
+    { id: 'assign', label: 'Actions', minWidth: 100 },
+  ];
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -75,7 +83,9 @@ const UserFileAssign = () => {
 
   const handleFileAssign = async (id) => {
     try {
-      await updateFileStatus(projectId, id, 5, currentUser.uid);
+      await updateFileStatus(projectId, id, { status: 5, client_assignedTo: currentUser.uid, client_assignedDate: new Date().toISOString() });
+
+      // await updateFileStatus(projectId, id, 5, currentUser.uid);
       setFiles(files.filter(file => file.id !== id));
     } catch (err) {
       console.error('Error updating file status:', err);
@@ -83,12 +93,6 @@ const UserFileAssign = () => {
     }
   };
 
-  const columns = [
-    { id: 'slNo', label: 'Sl. No', minWidth: 50 },
-    { id: 'name', label: 'File Name', minWidth: 170 },
-    { id: 'uploadedAt', label: 'Uploaded At', minWidth: 170 },
-    { id: 'edit', label: 'Actions', minWidth: 100 },
-  ];
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);

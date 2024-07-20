@@ -10,20 +10,27 @@ import { useAuth } from '../../context/AuthContext';
 import Table from '../Table/Table';
 
 
+
+
 const columnsInProgress = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
   { id: 'projectName', label: 'Project Name', minWidth: 150 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+  { id: 'client_assignedDate', label: 'Assigned Date', minWidth: 100 },
+  // { id: 'client_assignedTo', label: 'Assigned To', minWidth: 150 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 
 const columnsCompleted = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
   { id: 'projectName', label: 'Project Name', minWidth: 150 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
+  { id: 'client_completedDate', label: 'Completed Date', minWidth: 100 },
+  // { id: 'client_assignedTo', label: 'Completed By', minWidth: 150 },
 ];
+
 
 const UserFileFlow = () => {
   const [tabValue, setTabValue] = useState(0);
@@ -55,10 +62,10 @@ const UserFileFlow = () => {
 
         projectsWithFiles.forEach((project) => {
           const projectInProgressFiles = project.files.filter(
-            (file) => file.status === 5 && file.assignedTo === currentUser.uid
+            (file) => file.status === 5 && file.client_assignedTo === currentUser.uid
           );
           const projectCompletedFiles = project.files.filter(
-            (file) => file.status === 6 && file.assignedTo === currentUser.uid
+            (file) => file.status === 6 && file.client_assignedTo === currentUser.uid
           );
 
           projectInProgressFiles.forEach((file) =>

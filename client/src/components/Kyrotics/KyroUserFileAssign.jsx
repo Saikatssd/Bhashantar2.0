@@ -19,21 +19,28 @@ const KyroUserFileAssign = () => {
     const { currentUser } = useAuth();
 
 
+    const columns = [
+        { id: 'slNo', label: 'Sl. No', minWidth: 50 },
+        { id: 'name', label: 'File Name', minWidth: 170 },
+        { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+        { id: 'uploadedDate', label: 'Uploaded At', minWidth: 170 },
+        { id: 'assign', label: 'Actions', minWidth: 100 },
+    ];
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-          if (user) {
-            const token = await user.getIdTokenResult();
-            // console.log(token)
-            user.roleName = token.claims.roleName;
-            user.companyId = token.claims.companyId;
-    
-            setRole(user.roleName);
-            setCompanyId(user.companyId);
-          }
+            if (user) {
+                const token = await user.getIdTokenResult();
+                // console.log(token)
+                user.roleName = token.claims.roleName;
+                user.companyId = token.claims.companyId;
+
+                setRole(user.roleName);
+                setCompanyId(user.companyId);
+            }
         });
         return () => unsubscribe();
-      }, []);
+    }, []);
 
 
     useEffect(() => {
@@ -45,7 +52,7 @@ const KyroUserFileAssign = () => {
                     const projectName = await fetchProjectName(projectId);
                     const filteredFiles = projectFiles.filter(file =>
                         (file.status === 2 && companyId === 'cvy2lr5H0CUVH8o2vsVk')
-            
+
                     );
                     setFiles(filteredFiles);
                     setProjectName(projectName);
@@ -62,7 +69,10 @@ const KyroUserFileAssign = () => {
 
     const handleFileAssign = async (id) => {
         try {
-            await updateFileStatus(projectId, id, 3, currentUser.uid);
+            // updateFileStatus('projectId', 'fileId', { status: 'in-progress', kyro_assignedTo: 'userId' });
+
+            // await updateFileStatus(projectId, id, 3, currentUser.uid);
+            await updateFileStatus(projectId, id, { status: 3, kyro_assignedTo: currentUser.uid, kyro_assignedDate: new Date().toISOString() });
             setFiles(files.filter(file => file.id !== id));
         } catch (err) {
             console.error('Error updating file status:', err);
@@ -70,14 +80,8 @@ const KyroUserFileAssign = () => {
         }
     };
 
-  
 
-    const columns = [
-        { id: 'slNo', label: 'Sl. No', minWidth: 50 },
-        { id: 'name', label: 'File Name', minWidth: 170 },
-        { id: 'uploadedAt', label: 'Uploaded At', minWidth: 170 },
-        { id: 'edit', label: 'Actions', minWidth: 100 },
-    ];
+
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -104,7 +108,7 @@ const KyroUserFileAssign = () => {
                     handleEditClick={handleFileAssign}
                     projectName={projectName}
                 />
-         
+
             )}
         </div>
     );

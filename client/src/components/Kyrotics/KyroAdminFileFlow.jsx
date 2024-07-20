@@ -16,24 +16,27 @@ import TableAdmin from '../Table/TableAdmin';
 const columnsReadyForWork = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+  { id: 'uploadedDate', label: 'Uploaded At', minWidth: 100 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 
 const columnsInProgress = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
-  { id: 'assignedTo', label: 'Assigned To', minWidth: 150 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+  { id: 'kyro_assignedDate', label: 'Assigned Date', minWidth: 100 },
+  { id: 'kyro_assignedTo', label: 'Assigned To', minWidth: 150 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 
 const columnsCompleted = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
   // { id: 'projectName', label: 'Project Name', minWidth: 150 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
-  { id: 'completedBy', label: 'Completed By', minWidth: 150 },
+  { id: 'kyro_completedDate', label: 'Completed Date', minWidth: 100 },
+  { id: 'kyro_assignedTo', label: 'Completed By', minWidth: 150 },
 ];
 
 const KyroAdminFileFlow = () => {
@@ -95,12 +98,12 @@ const KyroAdminFileFlow = () => {
 
         const fetchFileUsers = async (files) => {
           return await Promise.all(files.map(async (file) => {
-            const assignedUser = file.assignedTo ? await fetchUserNameById(file.assignedTo) : null;
-            const completedUser = file.assignedTo ? await fetchUserNameById(file.assignedTo) : null;
+            const assignedUser = file.kyro_assignedTo ? await fetchUserNameById(file.kyro_assignedTo) : null;
+            // const completedUser = file.kyro_assignedTo ? await fetchUserNameById(file.assignedTo) : null;
             return {
               ...file,
-              assignedTo: assignedUser,
-              completedBy: completedUser
+              kyro_assignedTo: assignedUser,
+              // completedBy: completedUser
             };
           }));
         };
@@ -158,7 +161,9 @@ const KyroAdminFileFlow = () => {
 
   const handleAssignToUser = async (userId) => {
     try {
-      await updateFileStatus(projectId, selectedFileId, 3, userId);
+      await updateFileStatus(projectId, selectedFileId, { status: 3, kyro_assignedTo: userId, kyro_assignedDate: new Date().toISOString() });
+
+      // await updateFileStatus(projectId, selectedFileId, 3, userId);
       setReadyForWorkFiles(files.filter(file => file.id !== selectedFileId));
       handleCloseModal();
     } catch (err) {

@@ -15,35 +15,40 @@ import TableAdmin from '../Table/TableAdmin.jsx';
 import Table from '../Table/Table.jsx';
 import CompletedTable from '../Table/CompletedTable.jsx';
 
+
 const columnsReadyForWork = [
-    { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
-    { id: 'name', label: 'File Name', minWidth: 100 },
-    { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
-    { id: 'edit', label: '', minWidth: 100, align: 'right' },
+    { id: 'slNo', label: 'Sl. No', minWidth: 50 },
+    { id: 'name', label: 'File Name', minWidth: 170 },
+    { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+    { id: 'kyro_completedDate', label: 'Uploaded At', minWidth: 170 },
+    { id: 'edit', label: 'Actions', minWidth: 100 },
 ];
 
 const columnsInProgress = [
     { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
     { id: 'name', label: 'File Name', minWidth: 100 },
-    { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
-    { id: 'assignedTo', label: 'Assigned To', minWidth: 150 },
+    { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+    { id: 'client_assignedDate', label: 'Assigned Date', minWidth: 100 },
+    { id: 'client_assignedTo', label: 'Assigned To', minWidth: 150 },
     { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 
 const columnsCompleted = [
     { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
     { id: 'name', label: 'File Name', minWidth: 100 },
-    { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
-    { id: 'completedBy', label: 'Completed By', minWidth: 150 },
-    { id: 'download', label: '', minWidth: 100, align: 'right' },
-
+    { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+    // { id: 'projectName', label: 'Project Name', minWidth: 150 },
+    { id: 'client_completedDate', label: 'Completed Date', minWidth: 100 },
+    { id: 'client_assignedTo', label: 'Completed By', minWidth: 150 },
 ];
+
 
 const columnsDownloaded = [
     { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
     { id: 'name', label: 'File Name', minWidth: 100 },
-    { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
-    // { id: 'completedBy', label: 'Completed By', minWidth: 150 },
+    { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+    { id: 'client_completedDate', label: 'Completed Date', minWidth: 100 },
+    { id: 'client_assignedTo', label: 'Completed By', minWidth: 150 },
 ];
 
 const AdminFileFlow = () => {
@@ -91,12 +96,12 @@ const AdminFileFlow = () => {
 
                 const fetchFileUsers = async (files) => {
                     return await Promise.all(files.map(async (file) => {
-                        const assignedUser = file.assignedTo ? await fetchUserNameById(file.assignedTo) : null;
-                        const completedUser = file.assignedTo ? await fetchUserNameById(file.assignedTo) : null;
+                        const assignedUser = file.client_assignedTo ? await fetchUserNameById(file.client_assignedTo) : null;
+                        // const completedUser = file.assignedTo ? await fetchUserNameById(file.assignedTo) : null;
                         return {
                             ...file,
-                            assignedTo: assignedUser,
-                            completedBy: completedUser
+                            client_assignedTo: assignedUser,
+                            // completedBy: completedUser
                         };
                     }));
                 };
@@ -157,7 +162,9 @@ const AdminFileFlow = () => {
 
     const handleAssignToUser = async (userId) => {
         try {
-            await updateFileStatus(projectId, selectedFileId, 5, userId);
+            await updateFileStatus(projectId, selectedFileId, { status: 5, client_assignedTo: userId, client_assignedDate:  new Date().toISOString() });
+
+            // await updateFileStatus(projectId, selectedFileId, 5, userId);
             setReadyForWorkFiles(files.filter(file => file.id !== selectedFileId));
             handleCloseModal();
         } catch (err) {
@@ -174,7 +181,7 @@ const AdminFileFlow = () => {
     //     }
     // };
 
-    const handleDownload = async (fileId,fileName, format) => {
+    const handleDownload = async (fileId, fileName, format) => {
         try {
             const file = files.find(file => file.id === fileId);
             await exportFiles(projectId, fileId, fileName, format);

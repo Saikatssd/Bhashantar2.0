@@ -25,7 +25,7 @@
 //   const [user, setUser] = useState(null);
 //   const [dialogOpen, setDialogOpen] = useState(false);
 //   const navigate = useNavigate();
-  
+
 
 //   const handleOpenDialog = () => {
 //     setDialogOpen(true);
@@ -89,7 +89,7 @@
 
 //   const debouncedHtmlContent = useDebounce(htmlContent, 3000); // Use the custom debounce hook
 
-  
+
 //   const [companyId, setCompanyId] = useState(null);
 //   useEffect(() => {
 //     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -321,9 +321,11 @@ const Editor = () => {
   const handleSave = async () => {
     try {
       if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
-        await updateFileStatus(projectId, documentId, 4, user.uid);
+        // await updateFileStatus(projectId, id, { status: 3, kyro_assignedTo: currentUser.uid, kyro_assignDate: new Date() });
+
+        await updateFileStatus(projectId, documentId, { status: 4, kyro_completedDate: new Date().toISOString() });
       } else {
-        await updateFileStatus(projectId, documentId, 6, user.uid);
+        await updateFileStatus(projectId, documentId, { status: 6, client_completedDate: new Date().toISOString() });
       }
       // navigate('/mywork');
       navigate(-1);
@@ -385,10 +387,12 @@ const Editor = () => {
             init={{
               height: 'calc(100vh)',
               plugins:
-                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown",
+                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown pagebreak",
               toolbar:
-                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat |pagebreak",
               tinycomments_mode: "embedded",
+              pagebreak_split_block: true,
+              pagebreak_separator: '<!-- my page break -->',
               tinycomments_author: "Author name",
               mergetags_list: [
                 { value: "First.Name", title: "First Name" },
@@ -427,5 +431,3 @@ const Editor = () => {
 };
 
 export default Editor;
-
-

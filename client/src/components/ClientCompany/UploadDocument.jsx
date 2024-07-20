@@ -53,7 +53,7 @@ const UploadDocument = () => {
         user.companyId = token.claims.companyId;
 
         setRole(user.roleName);
-       
+
       }
     });
     return () => unsubscribe();
@@ -137,7 +137,7 @@ const UploadDocument = () => {
   const columns = [
     { id: 'slNo', label: 'Sl. No', minWidth: 50 },
     { id: 'name', label: 'File Name', minWidth: 170 },
-    { id: 'uploadedAt', label: 'Uploaded At', minWidth: 170 },
+    { id: 'uploadedDate', label: 'Uploaded At', minWidth: 170 },
     { id: 'edit', label: 'Actions', minWidth: 100 },
   ];
 
@@ -164,10 +164,13 @@ const UploadDocument = () => {
             {projects.map((project) => (
               <div
                 key={project.id}
-                className="folder p-6 max-w-sm bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg border-t-8 border-blue-800 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                // className="folder p-6 max-w-sm bg-gradient-to-r from-yellow-200 to-yellow-300 rounded-lg border-t-8 border-yellow-500 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+
+                className="folder p-6 max-w-sm bg-gradient-to-r from-blue-200 to-blue-500 rounded-lg border-t-8 border-blue-700 shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
                 onClick={() => handleProjectClick(project)}
               >
-                <div className="folder-tab bg-blue-800 p-2 rounded-t-lg"></div>
+                 {/* <div className="folder-tab bg-yellow-400 p-2 rounded-t-lg"></div> */}
+                <div className="folder-tab bg-blue-700 p-2 rounded-t-lg"></div>
                 <div className="p-4 text-center text-white font-semibold">
                   {project.name}
                 </div>
@@ -214,21 +217,21 @@ const UploadDocument = () => {
               />
             )}
             <Button
-          onClick={handleBack}
-          variant="contained"
-          color="primary"
-          size="large"
-          sx={{
-            position: "fixed",
-            bottom: 25,
-            left: 16,
-            width: "100px",
-            height: "55px",
-            fontSize: "18px",
-          }}
-        ><ArrowBackIcon sx={{marginRight:"3px"}}/>
-          Back
-        </Button>
+              onClick={handleBack}
+              variant="contained"
+              color="primary"
+              size="large"
+              sx={{
+                position: "fixed",
+                bottom: 25,
+                left: 16,
+                width: "100px",
+                height: "55px",
+                fontSize: "18px",
+              }}
+            ><ArrowBackIcon sx={{ marginRight: "3px" }} />
+              Back
+            </Button>
           </div>
         )}
         <Fab

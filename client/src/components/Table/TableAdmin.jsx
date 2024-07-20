@@ -10,6 +10,12 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import MuiTable from "@mui/material/Table";
 
+const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return !isNaN(date.getTime()) ? date.toLocaleDateString() : 'Invalid Date';
+  };
+
 function TableAdmin({
     columns,
     rows = [],
@@ -62,18 +68,7 @@ function TableAdmin({
                                                 >
                                                     {column.id === "edit" ? (
                                                         <div>
-                                                            {/* <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() =>
-                                  handleEditClick &&
-                                  handleEditClick(row.id, row.name)
-                                  
-                                }
-                                sx = {{marginRight: "5px"}}
-                              >
-                                Assign
-                              </Button> */}
+                                    
                                                             <Button
                                                                 variant="contained"
                                                                 color="primary"
@@ -85,8 +80,8 @@ function TableAdmin({
                                                                 Assign
                                                             </Button>
                                                         </div>
-                                                    ) : column.id === "uploadedAt" && value ? (
-                                                        new Date(value).toLocaleString()
+                                                    ) : column.id.endsWith('Date') && value ? (
+                                                        formatDate(value)
                                                     ) : (
                                                         value
                                                     )}

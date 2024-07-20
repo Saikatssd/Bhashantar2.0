@@ -10,6 +10,19 @@ import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import MuiTable from "@mui/material/Table";
 
+
+// const formatDate = (dateString) => {
+//   const date = new Date(dateString);
+//   return date.toString() !== 'Invalid Date' ? date.toLocaleDateString() : 'Invalid Date';
+// };
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'N/A';
+  const date = new Date(dateString);
+  return !isNaN(date.getTime()) ? date.toLocaleDateString() : 'Invalid Date';
+};
+
+
 function TableUpload({
   columns,
   rows = [],
@@ -62,18 +75,7 @@ function TableUpload({
                         >
                           {column.id === "edit" ? (
                             <div>
-                              {/* <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={() =>
-                                  handleEditClick &&
-                                  handleEditClick(row.id, row.name)
-                                  
-                                }
-                                sx = {{marginRight: "5px"}}
-                              >
-                                Assign
-                              </Button> */}
+                             
                               <Button
                                 variant="contained"
                                 color="primary"
@@ -85,11 +87,11 @@ function TableUpload({
                                 Delete
                               </Button>
                             </div>
-                          ) : column.id === "uploadedAt" && value ? (
-                            new Date(value).toLocaleString()
-                          ) : (
+                           ) : column.id.endsWith('Date') && value ? (
+                            formatDate(value)
+                        ) : (
                             value
-                          )}
+                        )}
                         </TableCell>
                       );
                     })}

@@ -14,7 +14,8 @@ const columnsInProgress = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
   { id: 'projectName', label: 'Project Name', minWidth: 150 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+  { id: 'kyro_assignedDate', label: 'Assigned Date', minWidth: 100 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 
@@ -22,7 +23,8 @@ const columnsCompleted = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
   { id: 'name', label: 'File Name', minWidth: 100 },
   { id: 'projectName', label: 'Project Name', minWidth: 150 },
-  { id: 'uploadedAt', label: 'Date Created', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+  { id: 'kyro_completedDate', label: 'Completed Date', minWidth: 100 },
 ];
 
 const KyroUserWorkspace = () => {
@@ -55,10 +57,10 @@ const KyroUserWorkspace = () => {
 
         projectsWithFiles.forEach((project) => {
           const projectInProgressFiles = project.files.filter(
-            (file) => file.status === 3 && file.assignedTo === currentUser.uid
+            (file) => file.status === 3 && file.kyro_assignedTo === currentUser.uid
           );
           const projectCompletedFiles = project.files.filter(
-            (file) => file.status === 4 && file.assignedTo === currentUser.uid
+            (file) => file.status === 4 && file.kyro_assignedTo === currentUser.uid
           );
 
           projectInProgressFiles.forEach((file) =>
