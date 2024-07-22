@@ -12,6 +12,8 @@ import UserSelectModal from '../UserSelectModal';
 import { auth } from '../../utils/firebase';
 import Table from '../Table/Table';
 import TableAdmin from '../Table/TableAdmin';
+import KyroCompletedTable from '../Table/KyroCompletedTable';
+import { useNavigate } from 'react-router-dom';
 
 const columnsReadyForWork = [
   { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
@@ -37,7 +39,17 @@ const columnsCompleted = [
   // { id: 'projectName', label: 'Project Name', minWidth: 150 },
   { id: 'kyro_completedDate', label: 'Completed Date', minWidth: 100 },
   { id: 'kyro_assignedTo', label: 'Completed By', minWidth: 150 },
+  { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
+const columnsQA = [
+  { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
+  { id: 'name', label: 'File Name', minWidth: 100 },
+  { id: 'pageCount', label: 'Page Count', minWidth: 100 },
+  // { id: 'projectName', label: 'Project Name', minWidth: 150 },
+  { id: 'kyro_completedDate', label: 'Completed Date', minWidth: 100 },
+  { id: 'kyro_assignedTo', label: 'Completed By', minWidth: 150 },
+];
+
 
 const KyroAdminFileFlow = () => {
   const { projectId } = useParams();
@@ -47,6 +59,7 @@ const KyroAdminFileFlow = () => {
   const [readyForWorkFiles, setReadyForWorkFiles] = useState([]);
   const [inProgressFiles, setInProgressFiles] = useState([]);
   const [completedFiles, setCompletedFiles] = useState([]);
+  const [qaFiles, setQaFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(0);
@@ -56,6 +69,7 @@ const KyroAdminFileFlow = () => {
   const [selectedFileId, setSelectedFileId] = useState(null);
   const [projectName, setProjectName] = useState('');
   const [role, setRole] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -118,12 +132,14 @@ const KyroAdminFileFlow = () => {
 
         const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 2));
         const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 3));
-        const completed = await fetchFileUsers(projectFiles.filter(file => file.status >= 4));
+        const completed = await fetchFileUsers(projectFiles.filter(file => file.status === 4));
+        const qa = await fetchFileUsers(projectFiles.filter(file => file.status >= 5));
 
 
         setReadyForWorkFiles(readyForWork.map((file, index) => ({ ...file, slNo: index + 1 })));
         setInProgressFiles(inProgress.map((file, index) => ({ ...file, slNo: index + 1 })));
         setCompletedFiles(completed.map((file, index) => ({ ...file, slNo: index + 1 })));
+        setQaFiles(qa.map((file, index) => ({ ...file, slNo: index + 1 })));
         setProjectName(projectName);
       } catch (err) {
         console.error('Error fetching files:', err);
@@ -172,7 +188,17 @@ const KyroAdminFileFlow = () => {
     }
   };
 
+  const handleSend = async (projectId,selectedFileId) => {
+    try {
 
+      await updateFileStatus(projectId, selectedFileId, { status: 5, kyro_completedDate: new Date().toISOString() });
+
+      navigate(-1);
+      console.log('Document status updated to 5');
+    } catch (err) {
+      console.error('Error updating document status:', err);
+    }
+  };
 
   if (isLoading) {
     return <CircularProgress />;
@@ -189,6 +215,7 @@ const KyroAdminFileFlow = () => {
           <Tab label="Ready for Work" />
           <Tab label="Work in Progress" />
           <Tab label="Completed" />
+          <Tab label="Quality Assured" />
         </Tabs>
       </Box>
 
@@ -218,9 +245,22 @@ const KyroAdminFileFlow = () => {
       </TabPanel>
 
       <TabPanel value={tabValue} index={2}>
-        <Table
+        <KyroCompletedTable
           columns={columnsCompleted}
           rows={completedFiles}
+          page={page}
+          rowsPerPage={rowsPerPage}
+          // handleEditNavigate={handleEditNavigate}
+          handleSend={handleSend}
+          handleChangePage={handleChangePage}
+          handleChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </TabPanel>
+
+      <TabPanel value={tabValue} index={3}>
+        <Table
+          columns={columnsQA}
+          rows={qaFiles}
           page={page}
           rowsPerPage={rowsPerPage}
           handleChangePage={handleChangePage}

@@ -133,7 +133,7 @@ const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return !isNaN(date.getTime()) ? date.toLocaleDateString() : 'Invalid Date';
-  };
+};
 
 function CompletedTable({
     columns,
@@ -199,7 +199,7 @@ function CompletedTable({
                                                                 Download as DOC
                                                             </Button>
                                                         </div>
-                                                      ) : column.id.endsWith('Date') && value ? (
+                                                    ) : column.id.endsWith('Date') && value ? (
                                                         formatDate(value)
                                                     ) : (
                                                         value

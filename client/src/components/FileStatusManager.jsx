@@ -30,10 +30,11 @@ const statusLabels = {
   1: 'ML Processing - 1',
   2: 'Ready-for-work - 2',
   3: 'InProgress - 3',
-  4: 'Ready-for-work (Client) - 4',
-  5: 'InProgress (Client) - 5',
-  6: 'Completed (Client) - 6',
-  7: 'Downloaded - 7',
+  4: 'Completed - 4',
+  5: 'Ready-for-work (Client) - 5',
+  6: 'InProgress (Client) - 6',
+  7: 'Completed (Client) - 7',
+  8: 'Downloaded - 8',
 };
 
 const FileStatusManager = () => {
@@ -98,7 +99,7 @@ const FileStatusManager = () => {
 
   const handleStatusChange = async (fileId, newStatus) => {
     try {
-      await updateFileStatusNumber(filterProject, fileId, newStatus );
+      await updateFileStatusNumber(filterProject, fileId, newStatus);
       const updatedFiles = files.map((file) =>
         file.id === fileId ? { ...file, status: newStatus } : file
       );
@@ -242,9 +243,8 @@ const FileStatusManager = () => {
                 />
                 <ListItemText
                   primary={file.name}
-                  secondary={`Status: ${
-                    file.status
-                  }, Project: ${project ? project.name : 'Unknown'}`}
+                  secondary={`Status: ${file.status
+                    }, Project: ${project ? project.name : 'Unknown'}`}
                 />
                 <div className="flex space-x-2">
                   {Object.keys(statusLabels).map((status) => (

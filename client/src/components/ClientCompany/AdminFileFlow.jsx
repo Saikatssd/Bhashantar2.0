@@ -40,6 +40,8 @@ const columnsCompleted = [
     // { id: 'projectName', label: 'Project Name', minWidth: 150 },
     { id: 'client_completedDate', label: 'Completed Date', minWidth: 100 },
     { id: 'client_assignedTo', label: 'Completed By', minWidth: 150 },
+    { id: 'download', label: '', minWidth: 100, align: 'right' },
+
 ];
 
 
@@ -106,18 +108,15 @@ const AdminFileFlow = () => {
                     }));
                 };
 
-                // const statusMapping = (companyId === 'cvy2lr5H0CUVH8o2vsVk')
-                //     ? { ready: 2, progress: 3, completed: 4 }
-                //     : { ready: 4, progress: 5, completed: 6 };
+                // const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 4));
+                // const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 5));
+                // const completed = await fetchFileUsers(projectFiles.filter(file => file.status === 6));
+                // const downloaded = await fetchFileUsers(projectFiles.filter(file => file.status === 7));
 
-                // const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.ready));
-                // const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.progress));
-                // const completed = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.completed));
-                const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 4));
-                const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 5));
-                const completed = await fetchFileUsers(projectFiles.filter(file => file.status === 6));
-                const downloaded = await fetchFileUsers(projectFiles.filter(file => file.status === 7));
-
+                const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 5));
+                const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 6));
+                const completed = await fetchFileUsers(projectFiles.filter(file => file.status === 7));
+                const downloaded = await fetchFileUsers(projectFiles.filter(file => file.status === 8));
 
                 setReadyForWorkFiles(readyForWork.map((file, index) => ({ ...file, slNo: index + 1 })));
                 setInProgressFiles(inProgress.map((file, index) => ({ ...file, slNo: index + 1 })));
@@ -162,7 +161,7 @@ const AdminFileFlow = () => {
 
     const handleAssignToUser = async (userId) => {
         try {
-            await updateFileStatus(projectId, selectedFileId, { status: 5, client_assignedTo: userId, client_assignedDate:  new Date().toISOString() });
+            await updateFileStatus(projectId, selectedFileId, { status: 5, client_assignedTo: userId, client_assignedDate: new Date().toISOString() });
 
             // await updateFileStatus(projectId, selectedFileId, 5, userId);
             setReadyForWorkFiles(files.filter(file => file.id !== selectedFileId));
@@ -181,16 +180,24 @@ const AdminFileFlow = () => {
     //     }
     // };
 
-    const handleDownload = async (fileId, fileName, format) => {
+    // const handleDownload = async (fileId, fileName, format) => {
+    //     try {
+    //         const file = files.find(file => file.id === fileId);
+    //         await exportFiles(projectId, fileId, fileName, format);
+    //     } catch (err) {
+    //         console.error('Error downloading file:', err);
+    //         setError(err);
+    //     }
+    // };
+
+    const handleDownload = async (fileId, fileName) => {
         try {
-            const file = files.find(file => file.id === fileId);
-            await exportFiles(projectId, fileId, fileName, format);
+            await exportFiles(projectId, fileId, fileName);
         } catch (err) {
             console.error('Error downloading file:', err);
             setError(err);
         }
     };
-
     if (isLoading) {
         return <CircularProgress />;
     }

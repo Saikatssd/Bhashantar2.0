@@ -325,7 +325,7 @@ const Editor = () => {
 
         await updateFileStatus(projectId, documentId, { status: 4, kyro_completedDate: new Date().toISOString() });
       } else {
-        await updateFileStatus(projectId, documentId, { status: 6, client_completedDate: new Date().toISOString() });
+        await updateFileStatus(projectId, documentId, { status: 7, client_completedDate: new Date().toISOString() });
       }
       // navigate('/mywork');
       navigate(-1);
