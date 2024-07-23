@@ -55,13 +55,17 @@ const ClientProjects = () => {
           <div className="grid grid-cols-1 gap-20 md:grid-cols-4 p-4">
             {projects.map((project) => (
               <Link to={`/kyro/${companyId}/project/${project.id}`} key={project.id}>
-                <div
+                {/* <div
                   className="folder p-6 max-w-sm bg-[#90ebf5] rounded-t-lg border-t-8 border-[#03518a] shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
                   <div className="folder-tab bg-[#03518a] p-2 rounded-t-lg"></div>
                   <div className="p-4 text-center">
                     {project.name}
                   </div>
+                </div> */}
+                <FolderIcon color="info" sx={{ fontSize: 130 }} className='hover:text-sky-500 hover:scale-110 ease-in duration-1000' />
+                <div className="p-1 text-center">
+                  {project.name}
                 </div>
               </Link>
             ))}
