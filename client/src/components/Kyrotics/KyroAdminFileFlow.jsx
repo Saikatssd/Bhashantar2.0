@@ -28,7 +28,7 @@ const columnsInProgress = [
   { id: 'name', label: 'File Name', minWidth: 100 },
   { id: 'pageCount', label: 'Page Count', minWidth: 100 },
   { id: 'kyro_assignedDate', label: 'Assigned Date', minWidth: 100 },
-  { id: 'kyro_assignedTo', label: 'Assigned To', minWidth: 150 },
+  { id: 'kyro_assignedToName', label: 'Assigned To', minWidth: 150 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 
@@ -38,7 +38,7 @@ const columnsCompleted = [
   { id: 'pageCount', label: 'Page Count', minWidth: 100 },
   // { id: 'projectName', label: 'Project Name', minWidth: 150 },
   { id: 'kyro_completedDate', label: 'Completed Date', minWidth: 100 },
-  { id: 'kyro_assignedTo', label: 'Completed By', minWidth: 150 },
+  { id: 'kyro_assignedToName', label: 'Completed By', minWidth: 150 },
   { id: 'edit', label: '', minWidth: 100, align: 'right' },
 ];
 const columnsQA = [
@@ -47,7 +47,7 @@ const columnsQA = [
   { id: 'pageCount', label: 'Page Count', minWidth: 100 },
   // { id: 'projectName', label: 'Project Name', minWidth: 150 },
   { id: 'kyro_completedDate', label: 'Completed Date', minWidth: 100 },
-  { id: 'kyro_assignedTo', label: 'Completed By', minWidth: 150 },
+  { id: 'kyro_assignedToName', label: 'Completed By', minWidth: 150 },
 ];
 
 
@@ -69,6 +69,7 @@ const KyroAdminFileFlow = () => {
   const [selectedFileId, setSelectedFileId] = useState(null);
   const [projectName, setProjectName] = useState('');
   const [role, setRole] = useState('');
+  const [selectedRows, setSelectedRows] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -110,25 +111,39 @@ const KyroAdminFileFlow = () => {
         const projectFiles = await fetchProjectFiles(projectId);
         const projectName = await fetchProjectName(projectId);
 
+        // const fetchFileUsers = async (files) => {
+        //   return await Promise.all(files.map(async (file) => {
+        //     const assignedUser = file.kyro_assignedTo ? await fetchUserNameById(file.kyro_assignedTo) : null;
+        //     // const completedUser = file.kyro_assignedTo ? await fetchUserNameById(file.assignedTo) : null;
+        //     return {
+        //       ...file,
+        //       kyro_assignedTo: assignedUser,
+        //       // completedBy: completedUser
+        //     };
+        //   }));
+        // };
+
+
         const fetchFileUsers = async (files) => {
           return await Promise.all(files.map(async (file) => {
-            const assignedUser = file.kyro_assignedTo ? await fetchUserNameById(file.kyro_assignedTo) : null;
-            // const completedUser = file.kyro_assignedTo ? await fetchUserNameById(file.assignedTo) : null;
-            return {
-              ...file,
-              kyro_assignedTo: assignedUser,
-              // completedBy: completedUser
-            };
+            try {
+              const assignedUser = file.kyro_assignedTo ? await fetchUserNameById(file.kyro_assignedTo) : null;
+              return {
+                ...file,
+                kyro_assignedToName: assignedUser,
+              };
+            } catch (error) {
+              console.error(`Error fetching user name for file ${file.id}:`, error);
+              return {
+                ...file,
+                kyro_assignedToName: file.kyro_assignedTo,  // Fallback to ID if name fetch fails
+              };
+            }
           }));
         };
 
-        // const statusMapping = (companyId === 'cvy2lr5H0CUVH8o2vsVk')
-        //   ? { ready: 2, progress: 3, completed: 4 }
-        //   : { ready: 4, progress: 5, completed: 6 };
 
-        // const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.ready));
-        // const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.progress));
-        // const completed = await fetchFileUsers(projectFiles.filter(file => file.status === statusMapping.completed));
+
 
         const readyForWork = await fetchFileUsers(projectFiles.filter(file => file.status === 2));
         const inProgress = await fetchFileUsers(projectFiles.filter(file => file.status === 3));
@@ -188,7 +203,7 @@ const KyroAdminFileFlow = () => {
     }
   };
 
-  const handleSend = async (projectId,selectedFileId) => {
+  const handleSend = async (projectId, selectedFileId) => {
     try {
 
       await updateFileStatus(projectId, selectedFileId, { status: 5, kyro_completedDate: new Date().toISOString() });
@@ -198,6 +213,18 @@ const KyroAdminFileFlow = () => {
     } catch (err) {
       console.error('Error updating document status:', err);
     }
+  };
+
+
+  const handleSendSelected = async () => {
+    for (const fileId of selectedRows) {
+      await updateFileStatus(projectId, fileId, { status: 5, kyro_completedDate: new Date().toISOString() });
+    }
+    setSelectedRows([]);
+    const updatedFiles = await fetchProjectFiles(projectId);
+    setFiles(updatedFiles);
+    navigate(-1);
+
   };
 
   if (isLoading) {
@@ -250,8 +277,10 @@ const KyroAdminFileFlow = () => {
           rows={completedFiles}
           page={page}
           rowsPerPage={rowsPerPage}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
           // handleEditNavigate={handleEditNavigate}
-          handleSend={handleSend}
+          handleSendSelected={handleSendSelected}
           handleChangePage={handleChangePage}
           handleChangeRowsPerPage={handleChangeRowsPerPage}
         />

@@ -109,7 +109,8 @@ export default function KyroSidebar({ companyId, role }) {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <div className='backdrop-blur-sm bg-white/30'>
+        <div className='backdrop-blur-sm  bg-white/30'>
+        {/* <div className='backdrop-blur-sm shadow-xl bg-white/30'> */}
             <div className={`flex flex-col justify-between transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed md:relative w-64 h-full z-10`}>
                 <div className="py-6 pr-6">
                 <div className="flex justify-center mb-6">
