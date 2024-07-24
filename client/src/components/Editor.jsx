@@ -321,16 +321,12 @@ const Editor = () => {
   const handleSave = async () => {
     try {
       if (companyId === 'cvy2lr5H0CUVH8o2vsVk') {
-        // await updateFileStatus(projectId, id, { status: 3, kyro_assignedTo: currentUser.uid, kyro_assignDate: new Date() });
-
         await updateFileStatus(projectId, documentId, { status: 4, kyro_completedDate: new Date().toISOString() });
       } else {
         await updateFileStatus(projectId, documentId, { status: 7, client_completedDate: new Date().toISOString() });
       }
-      // navigate('/mywork');
       navigate(-1);
-      console.log('Document status updated to 4 or 6');
-      // Optionally, you can add more logic here, such as navigating back or showing a success message.
+      console.log('Document status updated');
     } catch (err) {
       console.error('Error updating document status:', err);
     }
@@ -387,9 +383,9 @@ const Editor = () => {
             init={{
               height: 'calc(100vh)',
               plugins:
-                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown pagebreak",
+                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown pagebreak paragraphSpacing",
               toolbar:
-                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat |pagebreak",
+                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | pagebreak | paragraphSpacing",
               tinycomments_mode: "embedded",
               pagebreak_split_block: true,
               pagebreak_separator: '<!-- my page break -->',
@@ -398,8 +394,19 @@ const Editor = () => {
                 { value: "First.Name", title: "First Name" },
                 { value: "Email", title: "Email" }
               ],
+              setup: (editor) => {
+                editor.ui.registry.addButton('paragraphSpacing', {
+                  text: 'Paragraph Spacing',
+                  onAction: () => {
+                    editor.execCommand('FormatBlock', false, 'p');
+                    editor.getBody().querySelectorAll('p').forEach((paragraph) => {
+                      paragraph.style.marginTop = '20px';
+                    });
+                  },
+                });
+              },
             }}
-            onEditorChange={(content, editor) => setHtmlContent(content)}
+            onEditorChange={(content) => setHtmlContent(content)}
           />
         )}
         <Button
