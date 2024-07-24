@@ -140,7 +140,7 @@ const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return !isNaN(date.getTime()) ? date.toLocaleDateString() : 'Invalid Date';
-  };
+};
 
 function Table({
     columns,
@@ -149,6 +149,7 @@ function Table({
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
+    projectName
 }) {
     const navigate = useNavigate();
 
@@ -160,6 +161,9 @@ function Table({
 
     return (
         <div>
+            <h2 style={{ textAlign: "center", padding: "16px", fontWeight: "bold", fontSize: "24px" }}>
+                {projectName}
+            </h2>
             <Paper sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableContainer sx={{ maxHeight: 700 }}>
                     <MuiTable stickyHeader aria-label="sticky table">

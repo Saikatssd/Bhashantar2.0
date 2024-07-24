@@ -7,7 +7,7 @@ export const server = 'http://localhost:5566'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <div className="bg-hero relative isolate px-6 pt-2 lg:px-8">
+    <div className="relative isolate">
       <div
         className="  absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
         aria-hidden="true"
@@ -20,8 +20,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           }}
         />
       </div>
-    <App />
-    <div
+      <App />
+      <div
         className="absolute  inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
         aria-hidden="true"
       >

@@ -238,8 +238,8 @@ const UserManage = ({ companyId }) => {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <Typography variant="h4" className="text-2xl font-bold mb-4">
+    <div className="container mx-auto p-8">
+      <Typography variant="h4" className="text-xl font-bold mb-4 p-4">
         Manage Users
       </Typography>
       <TableContainer component={Paper} className="shadow-md">

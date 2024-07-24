@@ -11,6 +11,8 @@ import ClientProjects from './Kyrotics/ClientProjects';
 import KyroAdminFileFlow from './Kyrotics/KyroAdminFileFlow';
 import KyroUserFileAssign from './Kyrotics/KyroUserFileAssign';
 import KyroUserWorkspace from './Kyrotics/KyroUserWorkspace';
+import QAWorkspace from '../pages/QA/QAWorkspace'
+import FileStatusManager from './FileStatusManager';
 
 export default function KyroInstance({ role }) {
     const [userCompanyId, setUserCompanyId] = useState('');
@@ -39,23 +41,30 @@ export default function KyroInstance({ role }) {
                 <Routes>
                     <Route path="/profile" element={<Profile />} />
                     <Route path="project" element={<ClientProjects />} />
-                    <Route path="/myWork" element={<KyroUserWorkspace />} />
+                    <Route path="clientCompanies" element={<ClientCompanies />} />
 
 
                     {role === 'user' && (
                         <>
+                            <Route path="/myWork" element={<KyroUserWorkspace />} />
                             <Route path="project/:projectId" element={<KyroUserFileAssign />} />
+                        </>
+                    )}
+                    {role === 'QA' && (
+                        <>
+                            <Route path="project/:projectId" element={<QAWorkspace />} />
                         </>
                     )}
 
 
-                    {role !== 'user' && (
+                    {role !== 'user' && role !== 'QA' && (
                         <>
 
                             <Route path="project/:projectId" element={<KyroAdminFileFlow />} />
-                            <Route path="clientProjects" element={<ClientCompanies />} />
+                            <Route path="clientCompanies" element={<ClientCompanies />} />
                             <Route path="permissionManage" element={<PermissionsManage />} />
                             <Route path="roleManage" element={<RoleManage />} />
+                            <Route path="fileStatus" element={<FileStatusManager />} />
                             <Route path="userManage" element={<UserManage companyId={userCompanyId} />} />
                         </>
                     )}

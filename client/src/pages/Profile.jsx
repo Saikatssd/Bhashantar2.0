@@ -64,7 +64,7 @@ const Profile = () => {
 
     return (
         <div className='flex'>
-            <div className="w-full mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+            <div className="w-full mx-auto mt-10 p-6  rounded-lg">
                 <h2 className="text-2xl font-semibold mb-4 text-gray-800">User Profile</h2>
                 <div className="mb-4">
                     <span className="font-bold text-gray-700">Name: </span>

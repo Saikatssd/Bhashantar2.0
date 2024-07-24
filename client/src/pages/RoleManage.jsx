@@ -58,7 +58,7 @@ const RoleManager = () => {
   }, []);
 
   return (
-    <div className='flex'>
+    <div className='flex p-8'>
       {/* <Sidebar/> */}
     <div className="p-4 w-full">
       <h1 className="text-2xl font-bold mb-4">Role Manager</h1>

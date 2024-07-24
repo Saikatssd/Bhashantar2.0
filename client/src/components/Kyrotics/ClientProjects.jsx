@@ -5,6 +5,8 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 import { Link, useParams, Route, Routes } from 'react-router-dom';
+import FolderIcon from '@mui/icons-material/Folder';
+
 
 const ClientProjects = () => {
   const { companyId } = useParams();
