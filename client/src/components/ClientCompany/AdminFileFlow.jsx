@@ -7,14 +7,15 @@ import Tab from '@mui/material/Tab';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import TabPanel from '../TabPanel.jsx';
-import { fetchProjectFiles, fetchProjectName, fetchUserNameById, updateFileStatus, exportFiles } from '../../utils/firestoreUtil.jsx';
+import { fetchProjectFiles, fetchProjectName, fetchUserNameById, updateFileStatus, updateFileStatusNumber, exportFiles } from '../../utils/firestoreUtil.jsx';
 import { useParams } from 'react-router-dom';
 import UserSelectModal from '../UserSelectModal.jsx';
 import { auth } from '../../utils/firebase.jsx';
 import TableAdmin from '../Table/TableAdmin.jsx';
 import Table from '../Table/Table.jsx';
 import CompletedTable from '../Table/CompletedTable.jsx';
-
+import { server } from '../../main.jsx'
+import axios from 'axios';
 
 const columnsReadyForWork = [
     { id: 'slNo', label: 'Sl. No', minWidth: 50 },
@@ -49,7 +50,7 @@ const columnsDownloaded = [
     { id: 'slNo', label: 'Sl. No.', minWidth: 50 },
     { id: 'name', label: 'File Name', minWidth: 100 },
     { id: 'pageCount', label: 'Page Count', minWidth: 100 },
-    { id: 'client_completedDate', label: 'Completed Date', minWidth: 100 },
+    { id: 'client_downloadedDate', label: 'Download Date', minWidth: 100 },
     { id: 'client_assignedTo', label: 'Completed By', minWidth: 150 },
 ];
 
@@ -69,6 +70,8 @@ const AdminFileFlow = () => {
     const [openModal, setOpenModal] = useState(false);
     const [selectedFileId, setSelectedFileId] = useState(null);
     const [projectName, setProjectName] = useState('');
+    const [selectedRows, setSelectedRows] = useState([]);
+
     const [role, setRole] = useState('');
 
     useEffect(() => {
@@ -172,32 +175,77 @@ const AdminFileFlow = () => {
         }
     };
 
-    // const handleDownload = async (fileId, fileName, format) => {
-    //     try {
-    //         await exportFiles(projectId, fileId, fileName, format);
-    //     } catch (error) {
-    //         console.error('Error exporting files:', error);
-    //     }
-    // };
 
-    // const handleDownload = async (fileId, fileName, format) => {
+
+    // const handleDownload = async (fileId, fileName) => {
     //     try {
-    //         const file = files.find(file => file.id === fileId);
-    //         await exportFiles(projectId, fileId, fileName, format);
+    //         await exportFiles(projectId, fileId, fileName);
+    //         await updateFileStatusNumber(projectId, selectedFileId, 8);
+
     //     } catch (err) {
     //         console.error('Error downloading file:', err);
     //         setError(err);
     //     }
     // };
-
-    const handleDownload = async (fileId, fileName) => {
+    const handleDownload = async (projectId, fileId, fileName) => {
         try {
-            await exportFiles(projectId, fileId, fileName);
+            console.log("url", `${server}/api/document/${projectId}/${fileId}/exportDoc`)
+            // Send a request to the backend to trigger the file export
+            const response = await axios({
+                url: `${server}/api/document/${projectId}/${fileId}/exportDoc`, // Replace with your actual API endpoint
+                method: 'GET',
+                responseType: 'blob', // Important for binary data
+            });
+
+            // Create a URL for the downloaded data
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+
+            // Create a link element and set the download attribute
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName.replace('.pdf', '.zip')); // Use the correct file extension
+
+            // Append the link to the document and click it to start the download
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up by removing the link and revoking the object URL
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            // Optionally, update the file status
+            await updateFileStatus(projectId, fileId, { status: 8, client_downloadedDate: new Date().toISOString() });
+
+
         } catch (err) {
             console.error('Error downloading file:', err);
-            setError(err);
+            setError(err); // Assuming setError is a state function for displaying errors
         }
     };
+
+    // const handleDownloadSelected = async () => {
+    //     for (const fileId of selectedRows) {
+    //         handleDownload(projectId, fileId,fileName);
+    //         await updateFileStatus(projectId, fileId, { status: 8, client_downloadedDate: new Date().toISOString() });
+    //     }
+    //     setSelectedRows([]);
+    //     const updatedFiles = await fetchProjectFiles(projectId);
+    //     setFiles(updatedFiles);
+    //     navigate(-1);
+
+    // };
+    const handleDownloadSelected = async () => {
+        try {
+            for (const { id, name } of selectedRows) {
+                await handleDownload(projectId, id, name);
+            }
+            setSelectedRows([]);
+        } catch (err) {
+            console.error('Error downloading selected files:', err);
+        }
+    };
+
+
     if (isLoading) {
         return <CircularProgress />;
     }
@@ -235,6 +283,7 @@ const AdminFileFlow = () => {
                     columns={columnsInProgress}
                     rows={inProgressFiles}
                     page={page}
+                    projectName={projectName}
                     rowsPerPage={rowsPerPage}
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
@@ -246,10 +295,15 @@ const AdminFileFlow = () => {
                     columns={columnsCompleted}
                     rows={completedFiles}
                     page={page}
+                    projectName={projectName}
                     rowsPerPage={rowsPerPage}
+                    selectedRows={selectedRows}
+                    setSelectedRows={setSelectedRows}
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}
                     handleEditClick={handleDownload}
+                    handleDownloadSelected={handleDownloadSelected}
+
                 />
             </TabPanel>
 
@@ -258,6 +312,7 @@ const AdminFileFlow = () => {
                     columns={columnsDownloaded}
                     rows={downloadedFiles}
                     page={page}
+                    projectName={projectName}
                     rowsPerPage={rowsPerPage}
                     handleChangePage={handleChangePage}
                     handleChangeRowsPerPage={handleChangeRowsPerPage}

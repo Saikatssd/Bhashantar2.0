@@ -128,7 +128,9 @@ import TablePagination from "@mui/material/TablePagination";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import MuiTable from "@mui/material/Table";
-
+import Checkbox from "@mui/material/Checkbox";
+// import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
+import DownloadIcon from '@mui/icons-material/Download';
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -142,9 +144,21 @@ function CompletedTable({
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
+    selectedRows,
+    setSelectedRows,
+    handleDownloadSelected,
     handleEditClick,
     projectName,
 }) {
+
+    const handleCheckboxClick = (event, id) => {
+        if (event.target.checked) {
+            setSelectedRows([...selectedRows, id]);
+        } else {
+            setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+        }
+    };
+
     return (
         <div>
             <h2
@@ -157,11 +171,36 @@ function CompletedTable({
             >
                 {projectName}
             </h2>
+            <div className="flex justify-between items-center mb-4 px-4">
+
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleDownloadSelected}
+                    disabled={selectedRows.length === 0}
+                >
+                    <DownloadIcon  className="text-white text-lg mx-1"/>
+                    Download Selected
+                </Button>
+            </div>
             <Paper sx={{ width: "100%", overflow: "hidden" }}>
                 <TableContainer sx={{ maxHeight: 700 }}>
                     <MuiTable stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
+                                <TableCell padding="checkbox">
+                                    <Checkbox
+                                        indeterminate={selectedRows.length > 0 && selectedRows.length < rows.length}
+                                        checked={rows.length > 0 && selectedRows.length === rows.length}
+                                        onChange={(event) => {
+                                            if (event.target.checked) {
+                                                setSelectedRows(rows.map((row) => row.id));
+                                            } else {
+                                                setSelectedRows([]);
+                                            }
+                                        }}
+                                    />
+                                </TableCell>
                                 {columns.map((column) => (
                                     <TableCell
                                         key={column.id}
@@ -178,6 +217,12 @@ function CompletedTable({
                                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                 .map((row, index) => (
                                     <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                                        <TableCell padding="checkbox">
+                                            <Checkbox
+                                                checked={selectedRows.includes(row.id)}
+                                                onChange={(event) => handleCheckboxClick(event, row.id)}
+                                            />
+                                        </TableCell>
                                         {columns.map((column) => {
                                             const value = row[column.id];
                                             return (
@@ -193,10 +238,10 @@ function CompletedTable({
                                                                 color="primary"
                                                                 onClick={() =>
                                                                     handleEditClick &&
-                                                                    handleEditClick(row.id, row.name, 'doc')
+                                                                    handleEditClick(row.projectId, row.id, row.name)
                                                                 }
                                                             >
-                                                                Download as DOC
+                                                                Download
                                                             </Button>
                                                         </div>
                                                     ) : column.id.endsWith('Date') && value ? (
@@ -239,8 +284,9 @@ CompletedTable.propTypes = {
     page: PropTypes.number.isRequired,
     rowsPerPage: PropTypes.number.isRequired,
     handleChangePage: PropTypes.func.isRequired,
-    handleChangeRowsPerPage: PropTypes.func.isRequired,
-    handleEditClick: PropTypes.func,
+    selectedRows: PropTypes.array.isRequired,
+    setSelectedRows: PropTypes.func.isRequired, handleChangeRowsPerPage: PropTypes.func.isRequired,
+    handleDownloadSelected: PropTypes.func.isRequired,
     projectName: PropTypes.string.isRequired,
 };
 

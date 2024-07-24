@@ -19,49 +19,6 @@ import Docxtemplater from "docxtemplater";
 
 // --- File Operations ---
 
-// Upload a file to a specific project
-// export const uploadFile = async (projectId, file) => {
-//   try {
-//     const pdfStorageRef = ref(storage, `projects/${projectId}/${file.name}`);
-//     const pdfSnapshot = await uploadBytes(pdfStorageRef, file);
-//     const pdfDownloadURL = await getDownloadURL(pdfSnapshot.ref);
-
-//     const htmlFileName = file.name.replace('.pdf', '.html');
-//     const htmlBlob = new Blob([''], { type: 'text/html' });
-
-//     const htmlStorageRef = ref(storage, `projects/${projectId}/${htmlFileName}`);
-//     const htmlSnapshot = await uploadBytes(htmlStorageRef, htmlBlob);
-//     const htmlDownloadURL = await getDownloadURL(htmlSnapshot.ref);
-
-//     const timestamp = Date.now();
-//     const dateObject = new Date(timestamp);
-//     console.log('date',dateObject)
-
-//     const fileRef = await addDoc(collection(db, 'projects', projectId, 'files'), {
-//       name: file.name,
-//       pdfUrl: pdfDownloadURL,
-//       htmlUrl: htmlDownloadURL,
-
-//       uploadedDate: Date.now(),
-//       // uploadedDate: serverTimestamp(),
-//       status: 0,
-//       projectId: projectId,
-//     });
-
-//     return {
-//       id: fileRef.id,
-//       name: file.name,
-//       pdfUrl: pdfDownloadURL,
-//       htmlUrl: htmlDownloadURL,
-//       uploadedDate: new Date(),
-//       status: 0,
-//     };
-//   } catch (error) {
-//     console.error('Error uploading file:', error);
-//     throw new Error('Error uploading file');
-//   }
-// };
-
 export const uploadFile = async (projectId, file) => {
   try {
     // Upload the PDF file to Firebase Storage
@@ -132,54 +89,6 @@ export const deleteFile = async (projectId, fileId, fileName) => {
   }
 };
 
-
-// export const exportFiles = async (projectId, fileId, fileName, format) => {
-//   try {
-//     // Get the PDF and HTML URLs
-//     const pdfUrl = await getDownloadURL(ref(storage, `projects/${projectId}/${fileName}`));
-//     const htmlUrl = await getDownloadURL(ref(storage, `projects/${projectId}/${fileName}`));
-
-//     // Fetch the files
-//     const pdfBlob = await fetch(pdfUrl).then(res => res.blob());
-//     const htmlBlob = await fetch(htmlUrl).then(res => res.text());
-
-//     let convertedBlob;
-//     if (format === 'doc') {
-//       // Convert HTML to DOCX using Docxtemplater
-//       const zip = new PizZip();
-//       const doc = new Docxtemplater(zip);
-//       doc.loadZip(zip);
-//       doc.setData({ html: htmlBlob });
-//       doc.render();
-//       const out = doc.getZip().generate({ type: "blob" });
-//       convertedBlob = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-//     } else if (format === 'pdf') {
-//       // Directly use the fetched HTML blob as PDF
-//       convertedBlob = new Blob([htmlBlob], { type: 'application/pdf' });
-//     }
-
-//     // Create a zip file
-//     const zip = new JSZip();
-//     zip.file(`${fileName}`, pdfBlob);
-//     zip.file(`${fileName}.${format}`, convertedBlob);
-
-//     const zipBlob = await zip.generateAsync({ type: 'blob' });
-
-//     // Create a download link
-//     const url = URL.createObjectURL(zipBlob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = `${fileName}.zip`;
-//     document.body.appendChild(a);
-//     a.click();
-//     document.body.removeChild(a);
-//     URL.revokeObjectURL(url);
-
-//   } catch (error) {
-//     console.error('Error exporting files:', error);
-//     throw new Error('Error exporting files');
-//   }
-// };
 
 
 export const exportFiles = async (projectId, fileId, fileName, format) => {
@@ -252,115 +161,6 @@ export const exportFiles = async (projectId, fileId, fileName, format) => {
   }
 };
 
-// export const exportFiles = async (projectId, fileId, fileName, format) => {
-//   try {
-//     // Get the PDF and HTML URLs
-//     const pdfUrl = await getDownloadURL(ref(storage, `projects/${projectId}/${fileName}`));
-//     const htmlFileName = fileName.replace('.pdf', '.html');
-//     const htmlUrl = await getDownloadURL(ref(storage, `projects/${projectId}/${htmlFileName}`));
-
-//     const newFileName = fileName.replace('.pdf', `.${format}`);
-//     console.log("New File", newFileName);
-
-//     // Fetch the files
-//     const pdfBlob = await fetch(pdfUrl).then(res => res.blob());
-//     const htmlBlob = await fetch(htmlUrl).then(res => res.text());
-
-//     let convertedBlob;
-//     if (format === 'doc') {
-//       try {
-//         // Convert HTML to DOCX using Docxtemplater
-//         const zip = new PizZip();
-//         const doc = new Docxtemplater(zip);
-//         const htmlContent = `
-//           <html>
-//             <head>
-//               <meta charset="utf-8">
-//             </head>
-//             <body>
-//               ${htmlBlob}
-//             </body>
-//           </html>
-//         `;
-//         doc.loadZip(zip);
-//         doc.setData({ html: htmlContent });
-//         doc.render();
-//         const out = doc.getZip().generate({ type: "blob" });
-//         convertedBlob = new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-//       } catch (docError) {
-//         console.error('Error converting HTML to DOCX:', docError);
-//         throw new Error('Error converting HTML to DOCX');
-//       }
-//     } else if (format === 'pdf') {
-//       convertedBlob = new Blob([htmlBlob], { type: 'application/pdf' });
-//     }
-
-//     // Create a zip file
-//     const zip = new JSZip();
-//     zip.file(`${fileName}`, pdfBlob);
-//     zip.file(`${newFileName}`, convertedBlob);
-
-//     const zipBlob = await zip.generateAsync({ type: 'blob' });
-
-//     // Create a download link
-//     const url = URL.createObjectURL(zipBlob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = `${fileName}.zip`;
-//     document.body.appendChild(a);
-//     a.click();
-//     document.body.removeChild(a);
-//     URL.revokeObjectURL(url);
-
-//   } catch (error) {
-//     console.error('Error exporting files:', error);
-//     throw new Error('Error exporting files');
-//   }
-// };
-// //export file
-// export const exportFiles = async (projectId, fileId, fileName, format) => {
-//   try {
-//     // Get the PDF and HTML URLs
-//     const pdfUrl = await getDownloadURL(ref(storage, `projects/${projectId}/${fileName}.pdf`));
-//     const htmlUrl = await getDownloadURL(ref(storage, `projects/${projectId}/${fileName}.html`));
-
-//     // Fetch the files
-//     const pdfBlob = await fetch(pdfUrl).then(res => res.blob());
-//     const htmlBlob = await fetch(htmlUrl).then(res => res.text());
-
-//     let convertedBlob;
-//     if (format === 'doc') {
-//       // Convert HTML to DOC
-//       const converted = htmlDocx.asBlob(htmlBlob);
-//       convertedBlob = new Blob([converted], { type: 'application/msword' });
-//     } else if (format === 'pdf') {
-//       // Here you need a library to convert HTML to PDF. For simplicity, we use the original HTML as is
-//       convertedBlob = new Blob([htmlBlob], { type: 'application/pdf' });
-//     }
-
-//     // Create a zip file
-//     const zip = new JSZip();
-//     zip.file(`${fileName}.pdf`, pdfBlob);
-//     zip.file(`${fileName}.${format}`, convertedBlob);
-
-//     const zipBlob = await zip.generateAsync({ type: 'blob' });
-
-//     // Create a download link
-//     const url = URL.createObjectURL(zipBlob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = `${fileName}.zip`;
-//     document.body.appendChild(a);
-//     a.click();
-//     document.body.removeChild(a);
-//     URL.revokeObjectURL(url);
-
-//   } catch (error) {
-//     console.error('Error exporting files:', error);
-//     throw new Error('Error exporting files');
-//   }
-// };
-
 // Fetch files for a specific project
 export const fetchProjectFiles = async (projectId) => {
   try {
@@ -385,6 +185,8 @@ export const fetchProjectFiles = async (projectId) => {
         // client_uploadedDate: data.client_uploadedDate ? data.client_uploadedDate : null,
         client_assignedDate: data.client_assignedDate ? data.client_assignedDate : null,
         client_completedDate: data.client_completedDate ? data.client_completedDate : null,
+
+        client_downloadedDate: data.client_downloadedDate ? data.client_downloadedDate : null,
 
         kyro_assignedTo: data.kyro_assignedTo || null,
         client_assignedTo: data.client_assignedTo || null

@@ -87,21 +87,7 @@ const KyroAdminFileFlow = () => {
     return () => unsubscribe();
   }, []);
 
-  // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged(async (user) => {
-  //     if (user) {
-  //       const token = await user.getIdTokenResult();
-  //       const response = await axios.get(`${server}/api/auth/getUserProfile`, {
-  //         headers: {
-  //           Authorization: `Bearer ${token.token}`,
-  //         },
-  //       });
-  //       setCompanyId(response.data.companyId);
-  //       setRole(response.data.roleName);
-  //     }
-  //   });
-  //   return () => unsubscribe();
-  // }, []);
+
 
   useEffect(() => {
     const getFiles = async () => {
@@ -111,19 +97,7 @@ const KyroAdminFileFlow = () => {
         const projectFiles = await fetchProjectFiles(projectId);
         const projectName = await fetchProjectName(projectId);
 
-        // const fetchFileUsers = async (files) => {
-        //   return await Promise.all(files.map(async (file) => {
-        //     const assignedUser = file.kyro_assignedTo ? await fetchUserNameById(file.kyro_assignedTo) : null;
-        //     // const completedUser = file.kyro_assignedTo ? await fetchUserNameById(file.assignedTo) : null;
-        //     return {
-        //       ...file,
-        //       kyro_assignedTo: assignedUser,
-        //       // completedBy: completedUser
-        //     };
-        //   }));
-        // };
-
-
+        
         const fetchFileUsers = async (files) => {
           return await Promise.all(files.map(async (file) => {
             try {
