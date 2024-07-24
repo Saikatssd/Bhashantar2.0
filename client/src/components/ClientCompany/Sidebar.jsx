@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { handleSignOut } from '../../utils/auth';
+import logo from '../../assets/logo.png';
+
 
 export default function Sidebar({ companyId, role }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -16,6 +18,9 @@ export default function Sidebar({ companyId, role }) {
     <div className='backdrop-blur-sm  bg-white/30 h-screen shadow-xl '>
       <div className={`flex flex-col justify-between transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed md:relative w-64 h-full z-10`}>
         <div className="px-4 py-6">
+        <div className="flex justify-center mb-6">
+                        <img src={logo} alt="Logo" className="h-20 w-auto" />
+                    </div>
           <ul className="mt-6 space-y-2">
             <li>
               <Link to='/home' className={`block rounded-lg px-4 py-3 text-sm font-medium ${isActive('/home') ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>

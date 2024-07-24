@@ -59,6 +59,71 @@ router.get('/:projectId/documentInfo/:documentId', async (req, res) => {
 
 
 
+// router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
+//     const { projectId, documentId } = req.params;
+
+//     try {
+//         const documentRef = db.collection('projects').doc(projectId).collection('files').doc(documentId);
+//         const doc = await documentRef.get();
+
+//         if (!doc.exists) {
+//             return next(new ErrorHandler("Document Not Found", 404));
+//         }
+
+//         const { htmlUrl, pdfUrl, name } = doc.data();
+
+//         // Fetch the HTML content
+//         const htmlResponse = await axios.get(htmlUrl);
+//         const htmlContent = htmlResponse.data;
+
+        
+//         console.log(htmlContent);
+
+//         if (!htmlContent) {
+//             return next(new ErrorHandler("HTML content is empty or undefined", 500));
+//         }
+
+//         // Define custom styles
+//         const options = {
+//             paragraphStyles: {
+//                 spacing: {
+//                     after: 120, // Space after paragraphs (in twips; 1/20th of a point)
+//                     line: 240,  // Line height (in twips; 240 = 1.5 lines)
+//                 },
+//             },
+//         };
+
+//         // Convert HTML to DOCX with custom styles
+//         const docxBuffer = await htmlToDocx(htmlContent, options).catch(err => {
+//             throw new ErrorHandler("Error during HTML to DOCX conversion: " + err.message, 500);
+//         });
+
+//         res.setHeader('Content-Type', 'application/zip');
+//         res.setHeader('Content-Disposition', `attachment; filename="${name.replace('.pdf', '')}.zip"`);
+
+//         const archive = archiver('zip', {
+//             zlib: { level: 9 }
+//         });
+
+//         archive.on('error', (err) => {
+//             throw err;
+//         });
+
+//         archive.pipe(res);
+
+//         // Append DOCX and PDF files to the zip
+//         archive.append(docxBuffer, { name: `${name.replace('.pdf', '.docx')}` });
+//         const pdfResponse = await axios.get(pdfUrl, { responseType: 'stream' });
+//         archive.append(pdfResponse.data, { name });
+
+//         archive.finalize();
+
+//     } catch (error) {
+//         console.error('Error exporting document:', error);
+//         next(error);
+//     }
+// });
+
 router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
     const { projectId, documentId } = req.params;
 
@@ -74,18 +139,21 @@ router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
 
         // Fetch the HTML content
         const htmlResponse = await axios.get(htmlUrl);
-        const htmlContent = htmlResponse.data;
+        let htmlContent = htmlResponse.data;
 
         if (!htmlContent) {
             return next(new ErrorHandler("HTML content is empty or undefined", 500));
         }
+
+        // Replace custom page break comment with CSS-based page break
+        htmlContent = htmlContent.replace(/<!-- my page break -->/g, '<div style="page-break-after: always;"></div>');
 
         // Define custom styles
         const options = {
             paragraphStyles: {
                 spacing: {
                     after: 120, // Space after paragraphs (in twips; 1/20th of a point)
-                    line: 240,  // Line height (in twips; 240 = 1.5 lines)
+                    line: 600,  // Line height (in twips; 240 = 1.5 lines)
                 },
             },
         };
@@ -120,7 +188,6 @@ router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
         next(error);
     }
 });
-
 
 
 
