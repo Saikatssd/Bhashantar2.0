@@ -235,9 +235,7 @@
 // };
 
 // export default Editor;
-
-
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Editor as TinyMCEEditor } from "@tinymce/tinymce-react";
 import { fetchDocumentUrl, updateDocumentContent, updateFileStatus } from "../utils/firestoreUtil";
 import useDebounce from "../hooks/useDebounce";
@@ -258,6 +256,8 @@ const Editor = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isInitialContentSet, setIsInitialContentSet] = useState(false);
   const navigate = useNavigate();
+  const debouncedHtmlContent = useDebounce(htmlContent, 3000);
+  const [companyId, setCompanyId] = useState(null);
 
   const handleOpenDialog = () => {
     setDialogOpen(true);
@@ -267,9 +267,6 @@ const Editor = () => {
     setDialogOpen(false);
   };
 
-  const debouncedHtmlContent = useDebounce(htmlContent, 3000);
-
-  const [companyId, setCompanyId] = useState(null);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -326,7 +323,7 @@ const Editor = () => {
         await updateFileStatus(projectId, documentId, { status: 7, client_completedDate: new Date().toISOString() });
       }
       navigate(-1);
-      console.log('Document status updated');
+      console.log('Document status updated to 4 or 7');
     } catch (err) {
       console.error('Error updating document status:', err);
     }
@@ -335,6 +332,61 @@ const Editor = () => {
   const handleBack = () => {
     navigate(-1);
   };
+
+  const initializeEditor = useCallback(() => {
+    if (isInitialContentSet) {
+      return (
+        <TinyMCEEditor
+          key={documentId} // Force reinitialization on documentId change
+          apiKey='ooi9c4kr5rwugnplqe0yys09hwfen6hn4nr7hokoxxintdfp'
+          value={htmlContent}
+          init={{
+            height: 'calc(100vh)',
+            plugins:
+              "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown pagebreak",
+            toolbar:
+              "bold italic underline | fontfamily fontsize | align lineheight | checklist numlist bullist indent outdent | paragraphSpacing",
+            tinycomments_mode: "embedded",
+            pagebreak_split_block: true,
+            pagebreak_separator: '<!-- my page break -->',
+            tinycomments_author: "Author name",
+            mergetags_list: [
+              { value: "First.Name", title: "First Name" },
+              { value: "Email", title: "Email" }
+            ],
+            setup: (editor) => {
+              editor.ui.registry.addButton('paragraphSpacing', {
+                text: 'Paragraph Spacing',
+                onAction: () => {
+                  editor.execCommand('FormatBlock', false, 'p');
+                  editor.getBody().querySelectorAll('p').forEach((paragraph) => {
+                    paragraph.style.textIndent = '80px'; // Set the first line indentation
+                  });
+                },
+              });
+            },
+            
+          }
+        }
+
+          onInit={(evt, editor) => {
+            editorRef.current = editor;
+          }}
+          onEditorChange={(content, editor) => setHtmlContent(content)}
+        />
+      );
+    }
+    return null;
+  }, [htmlContent, isInitialContentSet, documentId]);
+
+  useEffect(() => {
+    return () => {
+      if (editorRef.current) {
+        editorRef.current.remove();
+        editorRef.current = null;
+      }
+    };
+  }, [documentId]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -376,39 +428,7 @@ const Editor = () => {
         </Button>
       </div>
       <div style={{ flex: 1, padding: "10px" }}>
-        {isInitialContentSet && (
-          <TinyMCEEditor
-            apiKey='ooi9c4kr5rwugnplqe0yys09hwfen6hn4nr7hokoxxintdfp'
-            value={htmlContent}
-            init={{
-              height: 'calc(100vh)',
-              plugins:
-                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist mediaembed casechange export formatpainter pageembed linkchecker a11ychecker tinymcespellchecker permanentpen powerpaste advtable advcode editimage advtemplate mentions tinycomments tableofcontents footnotes mergetags autocorrect typography inlinecss markdown pagebreak paragraphSpacing",
-              toolbar:
-                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat | pagebreak | paragraphSpacing",
-              tinycomments_mode: "embedded",
-              pagebreak_split_block: true,
-              pagebreak_separator: '<!-- my page break -->',
-              tinycomments_author: "Author name",
-              mergetags_list: [
-                { value: "First.Name", title: "First Name" },
-                { value: "Email", title: "Email" }
-              ],
-              setup: (editor) => {
-                editor.ui.registry.addButton('paragraphSpacing', {
-                  text: 'Paragraph Spacing',
-                  onAction: () => {
-                    editor.execCommand('FormatBlock', false, 'p');
-                    editor.getBody().querySelectorAll('p').forEach((paragraph) => {
-                      paragraph.style.marginTop = '20px';
-                    });
-                  },
-                });
-              },
-            }}
-            onEditorChange={(content) => setHtmlContent(content)}
-          />
-        )}
+        {initializeEditor()}
         <Button
           onClick={handleOpenDialog}
           variant="contained"
@@ -438,3 +458,5 @@ const Editor = () => {
 };
 
 export default Editor;
+
+

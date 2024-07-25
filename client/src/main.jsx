@@ -22,7 +22,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       </div>
       <App />
       <div
-        className="absolute  inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+        className="absolute  inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(70%-30rem)]"
         aria-hidden="true"
       >
         <div

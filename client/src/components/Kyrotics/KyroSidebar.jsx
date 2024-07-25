@@ -16,11 +16,11 @@ export default function KyroSidebar({ companyId, role }) {
     return (
         <div className='backdrop-blur-sm shadow-xl h-screen bg-white/30'>
             <div className={`flex flex-col justify-between transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed md:relative w-64 h-full z-10`}>
-                <div className="py-6 pr-6">
+                <div className="py-6 px-4">
                     <div className="flex justify-center mb-6">
                         <img src={logo} alt="Logo" className="h-20 w-auto" />
                     </div>
-                    <ul className="mt-6 space-y-1">
+                    <ul className="mt-6 space-y-1 ">
                         <li>
                             <Link to='/home' className={`block rounded-lg  px-4 py-4 text-sm font-medium ${isActive('/home') ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
                                 Home
@@ -49,7 +49,7 @@ export default function KyroSidebar({ companyId, role }) {
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={`/kyro/${companyId}/fileStatus`} className={`block rounded-lg px-4 py-4 text-sm font-medium ${isActive(`/kyro/${companyId}/permissionManage`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
+                                    <Link to={`/kyro/${companyId}/fileStatus`} className={`block rounded-lg px-4 py-4 text-sm font-medium ${isActive(`/kyro/${companyId}/fileStatus`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
                                         File Status
                                     </Link>
                                 </li>
@@ -57,7 +57,7 @@ export default function KyroSidebar({ companyId, role }) {
                         )}
                         {/* {role === 'admin' && ( */}
                             <li>
-                                <Link to={`/kyro/${companyId}/clientCompanies`} className={`block rounded-lg px-4 py-4 text-sm font-medium ${isActive(`/kyro/${companyId}/clientProjects`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
+                                <Link to={`/kyro/${companyId}/clientCompanies`} className={`block rounded-lg px-4 py-4 text-sm font-medium ${isActive(`/kyro/${companyId}/clientCompanies`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
                                     Go to Projects
                                 </Link>
                             </li>
