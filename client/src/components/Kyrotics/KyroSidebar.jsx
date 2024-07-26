@@ -104,7 +104,7 @@ export default function KyroSidebar({ companyId, role }) {
                             </li>
                         )} */}
                         <li>
-                            <button onClick={handleSignOut} className="w-full rounded-lg px-4 py-4 text-md font-medium text-gray-500 [text-align:_inherit] hover:bg-gray-100 hover:text-gray-700">
+                            <button onClick={handleSignOut} className="w-full rounded-lg px-4 py-4 text-sm font-medium text-gray-500 [text-align:_inherit] bg-[#fffff] hover:bg-[#d00000] hover:text-white">
                                 Logout
                             </button>
                         </li>
