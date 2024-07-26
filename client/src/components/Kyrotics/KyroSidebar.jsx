@@ -8,6 +8,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded';
 import StorageTwoToneIcon from '@mui/icons-material/StorageTwoTone';
+import RoomPreferencesIcon from '@mui/icons-material/RoomPreferences';
+import TaskIcon from '@mui/icons-material/Task';
+import FolderCopyIcon from '@mui/icons-material/FolderCopy';
 
 export default function KyroSidebar({ companyId, role }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -26,7 +29,7 @@ export default function KyroSidebar({ companyId, role }) {
                     <div className="flex justify-center mb-6">
                         <img src={logo} alt="Logo" className="h-20 w-auto" />
                     </div>
-                    <ul className="mt-6 space-y-1  ">
+                    <ul className="mt-16 space-y-3  ">
                         <li>
                             <Link to='/home' className={`block rounded-lg justify-center  px-4 py-4 text-md font-semibold ${isActive('/home') ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
                                 <HomeIcon className='mr-5' />
@@ -55,12 +58,12 @@ export default function KyroSidebar({ companyId, role }) {
                                 </li>
                                 <li>
                                     <Link to={`/kyro/${companyId}/permissionManage`} className={`block rounded-lg px-4 py-4 text-md font-medium ${isActive(`/kyro/${companyId}/permissionManage`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
-                                        Manage Permissions
+                                    <RoomPreferencesIcon className='mr-3' />Manage Permissions
                                     </Link>
                                 </li>
                                 <li>
                                     <Link to={`/kyro/${companyId}/fileStatus`} className={`block rounded-lg px-4 py-4 text-md font-medium ${isActive(`/kyro/${companyId}/fileStatus`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
-                                        File Status
+                                    <TaskIcon className='mr-5' />File Status
                                     </Link>
                                 </li>
                             </>
@@ -68,7 +71,7 @@ export default function KyroSidebar({ companyId, role }) {
                         {/* {role === 'admin' && ( */}
                         <li>
                             <Link to={`/kyro/${companyId}/clientCompanies`} className={`block rounded-lg px-4 py-4 text-md font-medium ${isActive(`/kyro/${companyId}/clientCompanies`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
-                                Go to Projects
+                            <FolderCopyIcon className='mr-5' />Go to Projects
                             </Link>
                         </li>
                         {/* )} */}
@@ -81,7 +84,8 @@ export default function KyroSidebar({ companyId, role }) {
                                 </li> */}
                                 <li>
                                     <Link to={`/kyro/${companyId}/mywork`} className={`block rounded-lg px-4 py-4 text-md font-medium ${isActive(`/kyro/${companyId}/mywork`) ? 'bg-[#e3d2fa] text-gray-700' : 'text-gray-500 hover:bg-[#e3d2fa] hover:text-gray-700'}`}>
-                                        <StorageTwoToneIcon />
+                                        <StorageTwoToneIcon className='mr-5'/>
+                                        My Work
                                     </Link>
                                 </li>
                             </>
@@ -104,8 +108,8 @@ export default function KyroSidebar({ companyId, role }) {
                             </li>
                         )} */}
                         <li>
-                            <button onClick={handleSignOut} className="w-full rounded-lg px-4 py-4 text-sm font-medium text-gray-500 [text-align:_inherit] bg-[#fffff] hover:bg-[#d00000] hover:text-white">
-                                Logout
+                            <button onClick={handleSignOut} className="w-full rounded-lg px-4 py-4 text-md font-medium text-gray-500 [text-align:_inherit] bg-[#fffff] hover:bg-[#d00000] hover:text-white">
+                                <LogoutIcon className='mr-5'/>Logout
                             </button>
                         </li>
                     </ul>
