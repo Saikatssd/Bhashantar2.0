@@ -1,0 +1,9 @@
+[
+    {
+      "origin": ["https://bhashantar-frontend.vercel.app"],
+      "method": ["GET", "HEAD", "DELETE", "POST", "PUT"],
+      "responseHeader": ["Content-Type"],
+      "maxAgeSeconds": 3600
+    }
+  ]
+  
