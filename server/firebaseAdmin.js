@@ -23,11 +23,13 @@ const serviceAccount = {
   universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN
 };
 
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://kyrotics.firebaseio.com"
 });
 
+// console.log( process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'))
 
 const auth = admin.auth();
 const db = admin.firestore();
