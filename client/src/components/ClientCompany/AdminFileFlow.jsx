@@ -164,7 +164,7 @@ const AdminFileFlow = () => {
 
     const handleAssignToUser = async (userId) => {
         try {
-            await updateFileStatus(projectId, selectedFileId, { status: 5, client_assignedTo: userId, client_assignedDate: new Date().toISOString() });
+            await updateFileStatus(projectId, selectedFileId, { status: 6, client_assignedTo: userId, client_assignedDate: new Date().toISOString() });
 
             // await updateFileStatus(projectId, selectedFileId, 5, userId);
             setReadyForWorkFiles(files.filter(file => file.id !== selectedFileId));

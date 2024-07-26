@@ -49,7 +49,7 @@ const UserFileAssign = () => {
         try {
           const projectFiles = await fetchProjectFiles(projectId);
           const projectName = await fetchProjectName(projectId);
-          const filteredFiles = projectFiles.filter(file => (file.status === 4)
+          const filteredFiles = projectFiles.filter(file => (file.status === 5)
           );
           setFiles(filteredFiles);
           setProjectName(projectName);

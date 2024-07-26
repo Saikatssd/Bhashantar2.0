@@ -6,7 +6,7 @@ import './index.css'
 export const server = 'http://localhost:5566'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  //<React.StrictMode>
     <div className="relative isolate">
       <div
         className="  absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
@@ -34,5 +34,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         />
       </div>
     </div>
-  </React.StrictMode>,
+  //</React.StrictMode>,
 )

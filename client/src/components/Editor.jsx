@@ -250,6 +250,7 @@ const Editor = () => {
   const editorRef = useRef(null);
   const [htmlContent, setHtmlContent] = useState("");
   const [pdfUrl, setPdfUrl] = useState("");
+  const [fileName, setFileName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
@@ -289,6 +290,8 @@ const Editor = () => {
         const text = await response.text();
         setHtmlContent(text);
         setPdfUrl(pdfUrl);
+        const extractedFileName = pdfUrl.split('/').pop();
+        setFileName(extractedFileName);
         setIsInitialContentSet(true);
       } catch (err) {
         setError("Error fetching document");
@@ -407,7 +410,7 @@ const Editor = () => {
         }}
       >
         <div>
-          <iframe src={pdfUrl} width="100%" height="1000px" />
+          <iframe src={pdfUrl} title="pdf" width="100%" height="988px" />
         </div>
         <Button
           onClick={handleBack}
@@ -436,11 +439,12 @@ const Editor = () => {
           size="large"
           sx={{
             position: "fixed",
-            bottom: 25,
-            right: 16,
-            width: "100px",
-            height: "55px",
-            fontSize: "18px",
+            top: 15,
+            right: 17,
+            width: "80px",
+            height: "36px",
+            fontSize: "14px",
+            zIndex:10
           }}
         >
           Submit
