@@ -15,9 +15,10 @@ const app = express();
 app.use(express.json());
 
 const corsOptions = {
-  origin: [process.env.FRONTEND_URL,"https://jubilant-garbanzo-q5pvj4q55vq24q46-5173.app.github.dev"],
+  origin: [process.env.FRONTEND_URL, "http://localhost:5173/"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
+  exposedHeaders: ["Content-Disposition"],
   credentials: true,
 };
 

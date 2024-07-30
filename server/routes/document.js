@@ -3,8 +3,10 @@ const { db } = require('../firebaseAdmin');
 const router = express.Router();
 const ErrorHandler = require('../utils/errorHandler')
 const axios = require('axios');
-const htmlToDocx = require('html-to-docx');
 const archiver = require('archiver');
+const { fetchDocumentAndCreateZip } = require('../middleware/createZip')
+
+
 
 
 
@@ -19,7 +21,8 @@ router.get('/:projectId/getDocuments', async (req, res) => {
         const snapshot = await documentsRef.get();
 
         if (snapshot.empty) {
-            return res.status(404).json({ message: 'No documents found for this project.' });
+            return next(new ErrorHandler("No documents found for this project.", 404));
+           
         }
 
         // Extract document data
@@ -42,7 +45,8 @@ router.get('/:projectId/documentInfo/:documentId', async (req, res) => {
         const doc = await documentRef.get();
 
         if (!doc.exists) {
-            return res.status(404).json({ message: 'Document not found.' });
+            return next(new ErrorHandler("Document Not found ", 404));
+
         }
 
         // Extract document data
@@ -76,7 +80,7 @@ router.get('/:projectId/documentInfo/:documentId', async (req, res) => {
 //         const htmlResponse = await axios.get(htmlUrl);
 //         const htmlContent = htmlResponse.data;
 
-        
+
 //         console.log(htmlContent);
 
 //         if (!htmlContent) {
@@ -124,65 +128,29 @@ router.get('/:projectId/documentInfo/:documentId', async (req, res) => {
 //     }
 // });
 
-router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
+
+
+
+
+router.get('/:projectId/:documentId/downloadDocx', async (req, res, next) => {
     const { projectId, documentId } = req.params;
 
     try {
-        const documentRef = db.collection('projects').doc(projectId).collection('files').doc(documentId);
-        const doc = await documentRef.get();
-
-        if (!doc.exists) {
-            return next(new ErrorHandler("Document Not Found", 404));
-        }
-
-        const { htmlUrl, pdfUrl, name } = doc.data();
-
-        // Fetch the HTML content
-        const htmlResponse = await axios.get(htmlUrl);
-        let htmlContent = htmlResponse.data;
-
-        if (!htmlContent) {
-            return next(new ErrorHandler("HTML content is empty or undefined", 500));
-        }
-
-        // Replace custom page break comment with CSS-based page break
-        htmlContent = htmlContent.replace(/<!-- my page break -->/g, '<div style="page-break-after: always;"></div>');
-
-        // Define custom styles
-        const options = {
-            paragraphStyles: {
-                spacing: {
-                    after: 120, // Space after paragraphs (in twips; 1/20th of a point)
-                    line: 600,  // Line height (in twips; 240 = 1.5 lines)
-                },
-            },
-        };
-
-        // Convert HTML to DOCX with custom styles
-        const docxBuffer = await htmlToDocx(htmlContent, options).catch(err => {
-            throw new ErrorHandler("Error during HTML to DOCX conversion: " + err.message, 500);
-        });
+        const { convertedFileBuffer, convertedFileName, pdfUrl, name } = await fetchDocumentAndCreateZip(projectId, documentId, 'docx');
 
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${name.replace('.pdf', '')}.zip"`);
 
-        const archive = archiver('zip', {
-            zlib: { level: 9 }
-        });
-
-        archive.on('error', (err) => {
-            throw err;
-        });
-
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        archive.on('error', (err) => { throw err; });
         archive.pipe(res);
 
         // Append DOCX and PDF files to the zip
-        archive.append(docxBuffer, { name: `${name.replace('.pdf', '.docx')}` });
+        archive.append(convertedFileBuffer, { name: convertedFileName });
         const pdfResponse = await axios.get(pdfUrl, { responseType: 'stream' });
         archive.append(pdfResponse.data, { name });
 
         archive.finalize();
-
     } catch (error) {
         console.error('Error exporting document:', error);
         next(error);
@@ -191,64 +159,35 @@ router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
 
 
 
+router.get('/:projectId/:documentId/downloadPdf', async (req, res, next) => {
+    const { projectId, documentId } = req.params;
 
-// router.get('/:projectId/:documentId/exportDoc', async (req, res, next) => {
-//     const { projectId, documentId } = req.params;
+    try {
+        const { convertedFileBuffer, convertedFileName, pdfUrl, name } = await fetchDocumentAndCreateZip(projectId, documentId, 'pdf');
 
-//     try {
-//         const documentRef = db.collection('projects').doc(projectId).collection('files').doc(documentId);
-//         const doc = await documentRef.get();
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${name.replace('.pdf', '')}.zip"`);
 
-//         if (!doc.exists) {
-//             return next(new ErrorHandler("Document Not Found", 404));
-//         }
+        
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        archive.on('error', (err) => { throw err; });
+        archive.pipe(res);
 
-//         const { htmlUrl, pdfUrl, name } = doc.data();
+        // Append the converted PDF buffer to the zip
+        archive.append(convertedFileBuffer, { name: convertedFileName });
 
-//         // Fetch the HTML content
-//         const htmlResponse = await axios.get(htmlUrl);
-//         const htmlContent = htmlResponse.data;
+        // Fetch the original PDF and append it to the zip
+        const pdfResponse = await axios.get(pdfUrl, { responseType: 'stream' });
+        archive.append(pdfResponse.data, { name });
 
-//         if (!htmlContent) {
-//             return next(new ErrorHandler("HTML content is empty or undefined", 500));
-//         }
+        await archive.finalize();
+    } catch (error) {
+        console.error('Error exporting document:', error);
+        next(error);
+    }
+});
 
-//         // Convert HTML to DOCX
-//         const docxBuffer = await htmlToDocx(htmlContent).catch(err => {
-//             throw new ErrorHandler("Error during HTML to DOCX conversion: " + err.message, 500);
-//         });
 
-//         // Set the response headers
-//         res.setHeader('Content-Type', 'application/zip');
-//         res.setHeader('Content-Disposition', `attachment; filename="${name.replace('.pdf', '')}.zip"`);
-
-//         // Create a zip stream
-//         const archive = archiver('zip', {
-//             zlib: { level: 9 } // Set the compression level
-//         });
-
-//         archive.on('error', (err) => {
-//             throw err;
-//         });
-
-//         // Pipe the archive to the response
-//         archive.pipe(res);
-
-//         // Append the PDF and DOCX files to the zip
-//         archive.append(docxBuffer, { name: `${name.replace('.pdf', '.docx')}` });
-
-//         // Fetch the PDF file as a stream and append it
-//         const pdfResponse = await axios.get(pdfUrl, { responseType: 'stream' });
-//         archive.append(pdfResponse.data, { name });
-
-//         // Finalize the archive (i.e., close the stream)
-//         archive.finalize();
-
-//     } catch (error) {
-//         console.error('Error exporting document:', error);
-//         next(error);
-//     }
-// });
 
 
 
